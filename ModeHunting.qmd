@@ -1,0 +1,246 @@
+---
+title: "Section 5 Multivariate Mode hunting"
+format: html
+editor: visual
+---
+
+```{r}
+library(devtools)
+library(tidyverse)
+library(gridExtra)
+library(ks) 
+library(goftest)
+library(mvtnorm)
+library(GoFKernel)
+library(igraph)
+library(ggpattern)
+
+dir_home <- "/Users/zq/qianzhao@umass.edu - Google Drive/My Drive/Research/Histogram/"
+dir_work <- "/Users/qianzhao/Google Drive/My Drive/Research/Histogram/"
+
+# load the BetaTrees package
+load_all(path = paste0(dir_home, "BetaTree/JASA/V1/BetaTrees-JASA-v1/R/"))
+
+# load functions 
+source(paste0(dir_home,  "BetaTree/JASA/V2/src/univariate.R"))
+source(paste0(dir_home,  "BetaTree/JASA/V2/src/sample_obs.R"))
+source(paste0(dir_home,  "BetaTree/JASA/V2/src/adaptive.R"))
+source(paste0(dir_home,  "BetaTree/JASA/V2/src/summary.R"))
+source(paste0(dir_home,  "BetaTree/JASA/V2/src/approximate_mode.R"))
+
+fig_dir <- paste0(dir_home, "BetaTree/JASA/V2/Fig/")
+data_dir <- paste0("/Users/zq/qianzhao@umass.edu - Google Drive/My Drive/Research/Histogram/Experiments/data/")
+```
+
+## Applying Beta-trees to identify modes in a distribution
+
+A second application of the Beta-tree histogram is identifying target regions which might indicate modes in the underlying distribution.
+
+A histogram provides a summary of the underlying data distribution by estimating the average density in individual region $R$, defined as $\bar{f}(R) = \frac{\int_R f(x)\mathrm{d} x}{|R|}$ (when $f$ is a continuous distribution and $|R|$ is the area of $R$). Regions with higher average density $\bar{f}(R)$ indicates a mode in the underlying density. This notion of modes as regions where excess probability mass is concentrated were introduced in [Muller and Sawitzki (1988)](https://www-tandfonline-com.stanford.idm.oclc.org/doi/abs/10.1080/01621459.1991.10475103) (in this paper, the authors defined excess mass as $\int_C (f(x) - \lambda)_+ \mathrm{d} x$). Visually, the group of rectangles on the top left and lower right corner (in the 2d Gaussian mixture) have higher $\bar{f}$ compared to the rectangles in between. The true mixture distribution has two modes at $(1.5, 0.6)$ and $(2, -1.5)$, which roughly corresponds to the rectangles colored darker green. Therefore, the local maxima of $\bar{f}(R)$ might indicate modes in the distribution $f(x)$. Because our algorithm provides a confidence interval for $\bar{f}(R)$, we can state with confidence whether one region $R$ is a local maxima, and these local maxima suggests modes in $f$.
+
+To identify local maxima, we consider a *consequence* of local maxima: suppose two regions A and B are distinct modes (in terms of average density $\bar{f}(R)$), then along *any* path connecting A and B, there should at least one region $R$ such that $\bar{f}(R) < \min(\bar{f}(A), \bar{f}(B))$. Here, instead of comparing the estimated $\bar{f}$, we compare the *upper* limit of CI of $\bar{f}(R)$ with the *lower* limit of the CI of $\bar{f}(A)$ and $\bar{f}(B)$. This definition aligns with the idea in [Burman and Polonik](https://anson.ucdavis.edu/~polonik/BurmanPol-ModeHunt.pdf), where they propose to determine whether two points $x$ and $y$ are distinct modes by testing whether $f(x_{\alpha})\leq \min(f(x), f(y))$ along any convex combination $x_{\alpha} = \alpha x + (1-\alpha) y$, $0\leq \alpha\leq y$. Our formulation differs from their approach in two ways: first, we test all of the paths connecting two candidate regions A and B, and this is necessary because though we may reject null hypothesis along one path, we may not be able to reject the null hypothesis along a different path. One example where this situation occurs is when a bivariate radially-symmetric density dips in the center (see [Figure 7.1 in Scott (2015)](https://onlinelibrary-wiley-com.stanford.idm.oclc.org/doi/book/10.1002/9781118575574)); second, we only need to check a finite number of regions since the number of rectangles are finite.
+
+We now describe how to identify local maxima of $\bar{f}(R)$. Our procedure can be summarized into the following steps (we denote $\mathcal{M}$ as the list of candidate modes)
+
+1.  Compute the adjacency matrix $A$ of dimension $N\times N$ ($N$ is the total number of regions), $A_{i,j} = 1$ if the $i$ and $j$-th rectangles are neighbors. Two regions are neighbors if they are adjacent to each other in the d-dim Euclidean space. For instance, in 2-dim, two rectangles are neighbors if $A_x\cap B_x\neq\emptyset$ and $A_y\cap B_y\neq\emptyset$, where $A_x = [A_{x,l}, A_{x,u}]$ ($A_{x,l}$ and $A_{x,u}$ are lower and upper endpoints of the $x$-axis of the rectangle). This definition extends to higher dimensions.
+
+2.  Order regions according to the estimated density $\hat{f}(R)$, i.e., $\hat{f}(R_{(1)}) > \hat{f}(R_{(2)}) > \ldots > \hat{f}(R_{(N)})$.
+
+3.  Start from rectangle with the highest estimated average density $R_{(1)}$ and mark it as a candidate mode (we can refer to it a $M_1$), $\mathcal{M} = \{M_1\}$.
+
+4.  Iterate from $i=2,\ldots, N$,
+
+    -   Iterate through every candidate modes $M_i$.
+        -   Iterate through every path connecting $R_{(i)}$ with $M_i$.
+
+        -   Along the path, is there any region R such that $\hat{f}(R)_U < \min(\hat{f}(M_i)_L, \hat{f}(R_{(i)})_L)$? Here, $\hat{f}(R)_L$ stands for the lower confidence limit of the density on $R$.
+
+        -   If this is False, then $R_{(i)}$ is not a mode. Move on to $R_{(i+1)}$
+    -   Add $R_{(i)}$ as a candidate mode $\mathcal{M} = \mathcal{M}\cup \{R_{(i)}\}$.
+
+As an example, we sample $n=2000$ observations from a 2-dim mixture of two Gaussian distributions:
+
+$$
+\frac{2}{5} \mathcal{N}\left(\left(\begin{matrix}-1.5 \\0.6\end{matrix}\right),\left(\begin{matrix}1 & 0.5 \\ 0.5 & 1\end{matrix}\right) \right) + \frac{3}{5} \mathcal{N}\left(\left(\begin{matrix}2 \\-1.5\end{matrix}\right),\left(\begin{matrix}1 & 0 \\ 0 & 1\end{matrix}\right) \right), 
+$$
+
+```{r sample_2d_mixture}
+n_2d<- 2000
+d_2d <- 2
+mu_2d <- matrix(c(-1.5, 0.6, 2,-1.5), nrow = 2, ncol = d_2d, byrow = T)
+sigma_2d <- array(NA, dim = c( d_2d, d_2d, 2))
+sigma_2d[,,1] <- matrix(c(1, 0.5 , 0.5, 1), 2, byrow = T)
+sigma_2d[,,2] <-  matrix(c(1, 0, 0, 1), 2, byrow = T)
+coord_2d <- matrix(rep(1:d_2d, 2), nrow = 2, byrow = T )
+prob_2d <- c(0.4, 0.6)
+
+X_2d <- as.matrix(sample_gaussian_mixture(n_2d, d_2d, mu_2d, sigma_2d, coord_2d, prob_2d))
+```
+
+```{r mode_2d}
+alpha_sim <- 0.1
+hist2d <- BuildHist(X_2d, alpha = alpha_sim, method = "weighted_bonferroni", bounded = F, plot = F)
+candidate2d <- FindModes(hist2d, d = 2, cutoff = -1)
+```
+
+```{r plot_modes}
+# function to plot the candidate modes
+# INPUTS
+# hist -- the histogram 
+# modes -- the true location of the modes, should have two columns called "x" and "y"
+# candidate_modes -- the candidate modes returned by our algorithm
+PlotModes2D <- function(hist, modes, candidate_modes){
+  colnames(hist) <- c("xmin","ymin","xmax","ymax",'density','lower','upper', "ndat",'level')
+  hist <- as.data.frame(hist)
+  g <- ggplot() +
+        geom_rect(aes(xmin = xmin, xmax = xmax,ymin = ymin, ymax = ymax,fill = density), color = "black",data = hist)  +
+    scale_fill_gradient2(low = "#f7fbff", mid = "#6baed6", high = "#08306b",aesthetics = "fill", name = "density") +
+        geom_rect_pattern(aes(xmin = xmin, xmax = xmax,ymin = ymin, ymax = ymax, fill = density), data=hist[candidate_modes, ], pattern = 'crosshatch',  color = "black", pattern_fill = "#FFC107") + 
+    geom_point(aes(x = x, y= y), data=modes, shape = 8, color = "#D81B60", size = 3) +
+        xlab("x") +  ylab("y") +
+        theme_classic() +  theme(text=element_text(size =18))
+  
+  return(g)
+}
+
+# function to plot density along the shortest path between two regions A and B
+# INPUTS
+# hist -- the histogram 
+# d -- data dimension
+# g -- adjacency graph of the regions in histogram 
+# A, B -- two regions
+plotdensity <- function(hist, d, g, A, B){
+  # find the shortest path between A and B
+  path <- igraph::shortest_paths(g, from = A, to = B)$vpath[[1]]
+  # make a bar plot of the density along the path
+  density <- data.frame(
+    id = factor(1:length(path)),
+    density = hist[path, (2*d + 1)],
+  lower = hist[path, (2*d + 2)],
+  upper = hist[path, (2*d + 3)])
+  # add two lines of the shorter of the lower CI of A and B 
+  g <- ggplot(density) + 
+    geom_point(aes(x = id, y = density)) + 
+    geom_segment(aes(x = id, xend = id, y = lower, yend = upper)) + 
+    geom_hline(yintercept = min(density$lower[1], density$lower[length(path)]),
+               linetype = "dashed") + 
+    ylab("density") + 
+    theme_bw() + scale_x_discrete(name ="Regions", 
+                    labels =c("Mode 1", rep("", length(path)-2), "Mode 2"))
+  
+  return(g)
+}
+```
+
+```{r plot-2d-modes, fig.width = 8, fig.height = 4}
+colnames(mu_2d) <- c("x", "y")
+FigMode2d <- PlotModes2D(hist2d, mu_2d, candidate2d$mode)
+FigCI2d <- plotdensity(hist2d, d = 2, g = candidate2d$g, A = candidate2d$mode[1], B = candidate2d$mode[2] )
+
+ggsave(filename =  "mode.png", plot = FigMode2d,path = fig_dir, width = 4.5, height = 3, units = "in")
+ggsave(filename =  "ci.png", plot = FigCI2d,path = fig_dir, width = 4.5, height = 3, units = "in")
+
+grid.arrange(FigMode2d, FigCI2d, nrow = 1, widths = c(3, 2))
+```
+
+Next, we consider a 3-d Gaussian mixture as in Section 4 example 4.
+
+```{r sample_3d}
+n_3d<- 20000
+d_3d <- 3
+mu_3d <- matrix(c(-1.5, 0.6, 1, 2,-1.5, 0, -2.6, -3, -2), nrow = 3, ncol = d_3d, byrow = T)
+sigma_3d <- array(NA, dim = c( d_3d, d_3d, 3))
+sigma_3d[,,1] <- matrix(c(1, 0.5 ,0.5, 0.5, 1, 0.5, 0.5, 0.5, 1), 3, byrow = T)
+sigma_3d[,,2] <-  matrix(c(1, 0, 0, 0, 1,0, 0, 0, 1), 3, byrow = T)
+sigma_3d[,,3] <- matrix(c(1, -0.4, 0.6, -0.4, 1, 0, 0.6, 0, 1),3, byrow = T)
+coord_3d <- matrix(rep(1:d_3d, 3), nrow = 3, byrow = T )
+prob_3d <- c(0.4, 0.4, 0.2)
+
+X_3d <- as.matrix(sample_gaussian_mixture(n_3d, d_3d, mu_3d, sigma_3d, coord_3d, prob_3d)) 
+```
+
+```{r 3d_mode}
+hist3d <- BuildHist(X_3d, alpha = alpha_sim, method = "weighted_bonferroni", bounded = F, plot = F)
+candidate3d <- FindModes(hist3d, d = 3, cutoff = 6)
+```
+
+As to the 3-d Gaussian mixture, we identify `r length(candidate3d$mode)` out of 3 true modes. We show the location of true mode and the modes identified from the algorithm (here we show the *center* of the region) in the table below.
+
+```{r mode_3d_result}
+get_center <- function(hist, d, candidate_modes, ndigits){
+  # center of the regions identified as modes
+  center <- (hist[candidate_modes, 1:d] + hist[candidate_modes, (d+1):(2*d)]) / 2
+  center <- center[order(center[,1]), ]
+  order <- order(center[,1])
+  dat <- data.frame(
+    index = 1:nrow(center),
+    location = apply(center, 1, 
+                     function(t) paste0('(', paste(round(t, ndigits), collapse = ","),")"))
+)
+  return(list(dat = dat, order = order))
+}
+
+knitr::kable(get_center(hist3d, 3, candidate3d$mode, 2)$dat)
+```
+
+## An approximate algorithm
+
+When the number of regions in the histogram is large, enumerating every path connecting two regions $R_i$ and $R_j$ becomes computationally infeasible. In this situation, we can use Monte Carlo simulation to generate a large number of paths and examine only these paths. Specifically, to verify whether $R_i$ is a new mode, we generate $L$ random walks of length $B$ on the graph. These random walks won't necessarily reach any current mode $M$, for our purpose we only need the random walk $P$ to reach a region $R$ such that $R$ is connected to $M$ through a path, such that the upper confidence bound of all regions along this path are higher than the lower confidence bound of $M$. We only need to verify whether all the regions on the path before $R$ has upper confidence bounds above the lower confidence bound of either $R_i$ or $M$ , if such is the case, then $R_i$ cannot be a new mode. We illustrate this algorithm through the three-dimensional example in Section 5. This example shows that by setting $L = 20$ and $B = 50$ this approximate mode hunting algorithm identifies the same three regions as modes as the exact algorithm with \`cutoff = 6\`.
+
+```{r mode_3d_approximate}
+candidate3dApproximate <- FindModesApproximate(hist3d, d_3d, L = 20, B = 10000)
+knitr::kable(get_center(hist3d, 3, candidate3dApproximate$mode, 2)$dat)
+```
+
+## Numerical studies of the mode hunting algorithms 
+
+We conduct a few simulation studies to evaluate accuracy and computation cost of the approximate and exact algorithms.
+
+### Settings
+
+We sample observations from mixtures of independent Gaussian distributions with varying number of dimensions $d$ , mixture components $m$ , and sample size $n$. The centers of the Gaussian components are sampled by first picking $m$ coordinates and set the values to be $\mu_j=\pm 8$ with equal probability.
+
+We evaluate accuracy by the distance between the location of a true mode $\mu$ with estimated mode $R$, where the distance $d(\mu, R)$ is defined as
+
+$$
+d(\mu, R) = \left(\sum_{i=1}^d (\mu_i - c_i)^2\right)^{1/2}, 
+$$
+
+where
+
+$$
+c_i = \begin{cases}
+X_i^U\quad \text{if } \mu_i > X_i^U, \\
+\mu_i \quad \text{if } X_i^L\leq \mu_i \leq X_i^U, \\
+X_i^L\quad \text{if } \mu_i < X_i^L.  \\
+\end{cases}
+$$
+
+We consider a mode is a "true positive" if $d(\mu, R)\leq 2$ for any of the true modes $\mu$. Otherwise, we record it as a "false positive".
+
+### Accuracy, computation cost and choice of parameters
+
+We use the function \`summary_mode_finding\` to compute summary statistics of the mode hunting algorithm. Since we repeat the simulation multiple times, we run the code on a cluster and include the script. Below we show an example of how to run one simulation (with a small number of repetitions). You can choose different paramters to evaluate the algorithm for a variety of parameters.
+
+```{r mode_approximate_ex}
+nrep <- 5
+result <- summary_mode_finding(n = 50000, d = 4, m = 5, method = "approximate", nrep = nrep, ndim = 4, L = 50, B = 10000)
+# code for exact algorithm
+# result <- summary_mode_finding(n = 1000, d = 4, m = 5, method = "exact", nrep = nrep, ndim = 4, cutoff = 5)
+```
+
+```{r mode_approximate_result}
+# calculate the TP and FP 
+tp <- numeric(nrep)
+fp <- numeric(nrep)
+
+for(l in 1:nrep){
+  x <- colSums(result$alg_distance[[l]] < 2)
+  tp[l] <- sum(x > 0)
+  fp[l] <- sum(x == 0)
+}
+
+cat("Average time = ", mean(result$alg_time), "; sd (time) = ", sd(result$alg_time) / sqrt(nrep) , "\n")
+cat("Average TP = ", mean(tp), "; sd (TP) = ", sd(tp) / sqrt(nrep), "\n")
+cat("Average FP = ", mean(fp), "; sd (FP) = ", sd(fp) / sqrt(nrep), "\n")
+```

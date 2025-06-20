@@ -1,0 +1,518 @@
+---
+title: "Section 4 Summarizing data using the Beta-tree histogram"
+format: html
+editor: visual
+---
+
+```{r setup, include = F}
+library(devtools)
+library(tidyverse)
+library(gridExtra)
+library(ks) 
+library(goftest)
+library(mvtnorm)
+library(GoFKernel)
+library(spatstat)
+
+dir_home <- "/Users/zq/qianzhao@umass.edu - Google Drive/My Drive/Research/Histogram/"
+dir_work <- "/Users/qianzhao/Google Drive/My Drive/Research/Histogram/"
+
+# load the BetaTrees package
+load_all( path = paste0(dir_home, "BetaTree/JASA/V1/BetaTrees-JASA-v1/R/"))
+
+# load functions 
+source(paste0(dir_home,  "BetaTree/JASA/V2/src/univariate.R"))
+source(paste0(dir_home,  "BetaTree/JASA/V2/src/sample_obs.R"))
+source(paste0(dir_home,  "BetaTree/JASA/V2/src/adaptive.R"))
+source(paste0(dir_home,  "BetaTree/JASA/V2/src/summary.R"))
+
+fig_dir <- paste0(dir_home, "BetaTree/JASA/V2/Fig/")
+data_dir <- paste0("/Users/zq/qianzhao@umass.edu - Google Drive/My Drive/Research/Histogram/Experiments/data/")
+```
+
+This notebook includes code to replicate results in Section 4 of the paper "Beta-trees: multivariate histograms with confidence statements".
+
+## Example 1: Beta-tree histogram with confidence intervals for univariate distributions
+
+In the first example, we visualize the Beta-tree histograms and corresponding confidence intervals for univariate distributions. We consider two distributions: standard Gaussian and Harp density, defined in Li et al. (2020).
+
+```{r ex1}
+alpha_val <- 0.01
+hist_gaussian <- plot_univariate(n = 2000, distribution = "gaussian", alpha = alpha_val)
+hist_harp <- plot_univariate(n = 2000, distribution = "harp", alpha = alpha_val)
+
+hist_gaussian$g_hist
+hist_harp$g_hist
+
+ggsave(filename = paste0("gaussian_1d_", alpha_val, ".png"), path =  fig_dir, plot = hist_gaussian$g_hist, units = "in", width = 5, height = 4)
+ggsave(filename = paste0("harp_1d_", alpha_val, ".png"), path =  fig_dir, plot = hist_harp$g_hist, units = "in", width = 5, height = 4)
+```
+
+## Example 2: Two-dimensional uniform distribution
+
+Next, we compute the histogram for a 2-d uniform distribution using a sample of size $n = 1,000$. We plot a bounded Beta-trees histogram at level $\alpha = 0.1$ that excludes 0.5% of the data in each tail end of the two coordinates.
+
+```{r ex2}
+n <- 1000
+d <- 2
+X <- matrix(runif(n*d), n, d)
+hist_uniform <- BuildHist(X, alpha = 0.1, method = "weighted_bonferroni", plot = T, 
+                          bounded = T, option = "qt", qt = c(0.005, 0.005))
+g_unif <- PlotHist(X, hist_uniform)
+ggsave(filename = paste0("unif1000.png"), path =  fig_dir, plot = g_unif, units = "in", width = 5, height = 4)
+```
+
+## Example 3: Bivariate Gaussian distribution
+
+In this example, we visualize two-dimensional data from a two-dimensional Gaussian distribution with correlation coefficient $\rho = 0.5$.
+
+```{r ex3}
+Sigma <- matrix(c(1, 0.5, 0.5, 1), ncol = 2)
+
+X_gaussian_small <- sample_gaussian(n = 1000, d = 2, sigma = Sigma)
+hist_gaussian_small <- BuildHist(X_gaussian_small, alpha = 0.1, method = "weighted_bonferroni", plot = T)
+
+X_gaussian_large <- sample_gaussian(n = 20000, d = 2, sigma = Sigma)
+hist_gaussian_large <- BuildHist(X_gaussian_large, alpha = 0.1, method = "weighted_bonferroni", plot = T)
+hist_gaussian_large_bounded <- BuildHist(X_gaussian_large, alpha = 0.1, method = "weighted_bonferroni", plot = T, bounded = T, option = "qt", qt = c(0.005, 0.005))
+
+g_gaussian_small <- PlotHist(X_gaussian_small, hist_gaussian_small)
+g_gaussian_large <- PlotHist(X_gaussian_large, hist_gaussian_large)
+g_gaussian_large_bounded <- PlotHist(X_gaussian_large, hist_gaussian_large_bounded)
+
+
+ggsave(filename = paste0("normal1000.png"), path =  fig_dir, plot = g_gaussian_small, units = "in", width = 5, height = 4)
+ggsave(filename = paste0("normal20k.png"), path =  fig_dir, plot = g_gaussian_large, units = "in", width = 5, height = 4)
+ggsave(filename = paste0("normal20kbdd.png"), path =  fig_dir, plot = g_gaussian_large_bounded, units = "in", width = 5, height = 4)
+```
+
+\
+
+```{r ex2_ci}
+nrect <- nrow(hist_gaussian_small)
+avg_density <- numeric(nrect)
+for(i in 1:nrect){
+  avg_density[i] <- pmvnorm(lower = hist_gaussian_small[i, 1:2], 
+                            upper = hist_gaussian_small[i, 3:4], 
+                            mean = c(0, 0), sigma = Sigma) / (hist_gaussian_small[i, 4] - hist_gaussian_small[i, 2]) / (hist_gaussian_small[i, 3] - hist_gaussian_small[i, 1])
+}
+
+g_density_2d <- ggplot() + 
+  geom_point(aes(x = avg_density, y = hist_gaussian_small[, 5] )) + 
+  geom_segment(aes(x = avg_density, 
+                   xend = avg_density, 
+                   y = hist_gaussian_small[, 6], 
+                   yend = hist_gaussian_small[, 7]),
+               color="grey20",
+               arrow = arrow(angle = 90, ends = "both", 
+                             length = unit(0.03, "inches"))) + 
+  geom_abline(slope = 1, intercept = 0, linetype = "dashed") + 
+  xlab("Average density") + 
+  ylab("Estimated density") + 
+  theme_classic() + 
+  theme(text = element_text(size = 18)) 
+
+ggsave(g_density_2d, filename = paste0(fig_dir, "est_density.png"), 
+           width = 5, height = 4, units = "in")
+```
+
+## Example 4: Three-dimensional mixture of Gaussians
+
+In this example, we sample $n = 20,000$ observations from 3-dim mixture of three Gaussian distributions:
+
+$$
+\frac{2}{5} \mathcal{N}\left(\left(\begin{matrix}-1.5 \\0.6\\1\end{matrix}\right),\left(\begin{matrix}1 & 0.5 & 0.5 \\ 1 & 0.5 & 0.5 \\ 0.5 & 0.5 & 1
+\end{matrix}\right) \right) + \frac{2}{5} \mathcal{N}\left(\left(\begin{matrix}2 \\-1.5\\0\end{matrix}\right),\left(\begin{matrix}1 & 0 & 0 \\ 0 & 1 & 0 \\ 0 & 0 & 1\end{matrix}\right) \right) + \frac{1}{5} \mathcal{N}\left(\left(\begin{matrix}-2.6\\-3\\-2\end{matrix}\right),\left(\begin{matrix}1 & -0.4 & 0.6 \\ -0.4 & 1 & 0 \\ 0.6 & 0 & 1\end{matrix}\right) \right) 
+$$
+
+```{r sample_3d}
+n_3d<- 20000
+d <- 3
+mu <- matrix(c(-1.5, 0.6, 1, 2,-1.5, 0, -2.6, -3, -2), nrow = 3, ncol = d, byrow = T)
+sigma <- array(NA, dim = c( d, d, 3))
+sigma[,,1] <- matrix(c(1, 0.5 ,0.5, 0.5, 1, 0.5, 0.5, 0.5, 1), 3, byrow = T)
+sigma[,,2] <-  matrix(c(1, 0, 0, 0, 1,0, 0, 0, 1), 3, byrow = T)
+sigma[,,3] <- matrix(c(1, -0.4, 0.6, -0.4, 1, 0, 0.6, 0, 1),3, byrow = T)
+coord <- matrix(rep(1:d, 3), nrow = 3, byrow = T )
+prob <- c(0.4, 0.4, 0.2)
+
+X_3d <- as.matrix(sample_gaussian_mixture(n_3d, d, mu, sigma, coord, prob))
+```
+
+```{r ex4_params}
+nbins <- 15 + 1
+alpha_sim <- 0.1 
+```
+
+We visualize the data using three approaches:
+
+1.  Kernel density estimate. We use a plug-in bandwidth estimator (see the paper by [Chacon, J. E. and Duong T. (2009](https://link-springer-com.stanford.idm.oclc.org/article/10.1007/s11749-009-0168-4)); [Wand, M. P. and Jone, M. C. (1994)](http://www.matt-wand.utsacademics.info/publicns/WandJones94.pdf);[Sheather, S. J. and Jones, M. C. (1991)](https://www-jstor-org.stanford.idm.oclc.org/stable/2345597)). This method is implemented in the R package `ks`.
+
+2.  Histogram with fixed number of bins in each dimension. In both settings, we choose `r nbins` bins in each dimension.
+
+3.  Our approach, where we use weighted Bonferroni correction and set $\alpha$ = `r alpha_sim`. Because only bounded regions are considered in the histogram, and thus observations near the boundary would not be covered by any regions in the histogram. That's why the space on the boundary is empty. This behavior might be helpful in terms of visualization because it allows users to focus on where observations are more concentrated. On the other hand, these unbounded regions on the boundary cannot be merged, and therefore even if the data is from a uniform distribution (see Appendix), the histogram would be composed of multiple regions instead of a single region, which might be misleading at a first glance. Another potential issue is that when the dimension increases, a higher number of observations would be excluded, whereas we would ideally want to include as many samples as possible.
+
+    To address this issue, we can construct a histogram using the algorithm using all of the observations inside the initial bounded region. The bounded region can be defined by manually specifying the first few partitions. For example, instead of partitioning along the median, we can partition along the $x$-axis at 0.005 and 0.995 quantiles first, and then partition along the $y$-axis (using samples *inside* the first region) at 0.005 and 0.995 quantiles. While the points outside of the two ranges would be excluded, all of the points inside the initial bounded region would be included in the histogram.
+
+```{r ex4_hist}
+# 1. Kernel estimate 
+H3d <- Hpi(X_3d)
+kernel3d_estimate <- kde(X_3d, H3d, gridsize = 100)
+
+# 2. Fixed bin histogram
+limits <- apply(X_3d, 2, range) 
+xval <- seq(limits[1,1],limits[2,1],length.out = nbins)
+yval <- seq(limits[1,2],limits[2,2],length.out = nbins)
+zval <- seq(limits[1,3],limits[2,3],length.out = nbins)
+lower <- as.matrix(expand.grid(x = xval[-nbins],
+                      y = yval[-nbins],
+                      z = zval[-nbins]))
+upper <- as.matrix( expand.grid(x = xval[-1],
+                      y = yval[-1],
+                      z = zval[-1]))
+
+# number of points in each bin 
+counts <- numeric(nrow(lower))
+for(i in 1:nrow(lower)){
+  counts[i] <- sum(apply(X_3d, 1, function(t) prod(t < upper[i, ])) * 
+    apply(X_3d, 1, function(t) prod(t >= lower[i, ])))
+  cat(i, ":", counts[i], "\n")
+}
+FixedHist3d <- cbind(lower, upper, (counts + 1) / n_3d / apply(upper - lower, 1, prod))
+
+# 3. kdtree
+hist3d <- BuildHist(X_3d, alpha = alpha_sim, method = "weighted_bonferroni", bounded = F, plot = F)
+histBounded3d <- BuildHist(X_3d, alpha = alpha_sim, method = "weighted_bonferroni", bounded = T, plot = F, qt = c(0.005, 0.005, 0.005), option = "qt")
+```
+
+The histogram with fixed number of bins include `r (nbins - 1)^3` regions, and among them only `r sum(counts>0)` are non-empty. In comparison, the Beta-tree histogram contains `r nrow(hist3d)` regions (the bounded histogram contains `r nrow(histBounded3d)` regions). We plot the estimated density on the plane $z = 1$. We also plot observations that lie in a *slab* parallel to the $x-y$ plane where $z$-axis is between 0.8 and 1.2. Data in this slab should be mostly from the first population. From the figure below, we observe that the kernel density estimator captures both the first and the second population, and the Beta-tree histogram are also able to capture two populations, and provides a more parsimonious description of the data compared to the histogram with fixed bin size.
+
+```{r  viz_3d_hist, fid.height = 14, fig.width = 10}
+# set parameters
+zmin <- 0.8
+zmax <- 1.2
+zloc <- 1
+# data points
+xinside <- X_3d[which(X_3d[,3] <= zmax & X_3d[,3] >= zmin), ]
+
+# 1. kernel
+kernel3dloc <- expand.grid(x = seq(-4, 4.5, length.out=100), y = seq(-3.5, 2.5, length.out=100), z = 1)
+kernel3dval <- predict(kernel3d_estimate, x = cbind(kernel3dloc$x, kernel3dloc$y, kernel3dloc$z))
+dat <- tibble(
+  X = kernel3dloc$x,
+  Y = kernel3dloc$y,
+  Density = kernel3dval
+)
+FigKernel3d <- ggplot(data = dat, aes(X, Y, z = Density)) + geom_contour_filled() + xlim(-4,4.5) + xlab("X") +ylab("Y") + theme_classic()
+
+# 2. fixed bin histogram
+# dim indicates which dimension is *orthogonal* to the slice
+plot3dhist <- function(hist, xinside, loc, dim, xlab = "X", ylab = "Y"){
+  xinside <- xinside[,-dim]
+  index <- (1:6)[-c(dim, dim+3)]
+  HistSubset <- hist[which(hist[,dim] < loc & hist[,(3+dim)] > loc & hist[,(2*dim + 1)] > 2* 10^(-4)), , drop = F]
+  g <- ggplot() +
+        geom_rect(aes(xmin = HistSubset[,index[1]], xmax = HistSubset[,index[3]],ymin = HistSubset[,index[2]], ymax = HistSubset[,index[4]],fill = HistSubset[,7]), color = "black")  +
+        scale_fill_gradient2(low = "#f7fbff", mid = "#6baed6", high = "#08306b",aesthetics = "fill", name = "density") +
+        geom_point(aes(x = xinside[,1], y = xinside[,2]), size = 0.4, alpha =nrow(xinside)^(-0.25)) +
+        xlab(xlab) +  ylab(ylab) +
+        theme_classic() +  theme(text=element_text(size =18))
+  
+  return(g)
+}
+FigFixed3d <- plot3dhist(FixedHist3d, xinside, zloc, dim = 3)
+
+# 3. Beta-trees histogram 
+FigHist3d <- plot3dhist(hist3d, xinside, zloc, dim = 3)
+# 4. Bounded beta-trees histogram
+FigBoundedHist3d <- plot3dhist(histBounded3d, xinside, zloc, dim = 3)
+
+# store each figure
+ggsave(filename =  "kernel3d.png", plot = FigKernel3d,path = fig_dir, width = 4.5, height = 3, units = "in")
+ggsave(filename =  "fixed3d.png", plot = FigFixed3d,path = fig_dir, width = 4.5, height = 3, units = "in")
+ggsave(filename =  "hist3d.png", plot = FigHist3d,path = fig_dir, width = 4.5, height = 3, units = "in")
+ggsave(filename =  "bounded3d.png", plot = FigBoundedHist3d,path = fig_dir, width = 4.5, height = 3, units = "in")
+grid.arrange(FigKernel3d, FigFixed3d, FigHist3d, FigBoundedHist3d, nrow = 2)
+```
+
+## Example 5: Ten-dimensional mixture of Gaussians
+
+In this example we visualize an equal mixture of five Gaussian distributions of dimension $d = 10$. The cluster centers are iid $N(0,8)$ and the covariance matrices are random matrices.
+
+```{r ex5_param}
+n_10d <- 100000
+d_10d <- 10
+```
+
+```{r ex5_cluster_params}
+set.seed(10)
+
+ncluster <- 5
+ndim <- 10 # number of coordinates in the cluster
+coord <- matrix(rep(1:d_10d, ncluster), nrow = ncluster, byrow = T)
+prob <- rep(1/ncluster, ncluster)
+mu <- matrix(rnorm(ncluster * d_10d, 0, 8), ncluster, d_10d)
+
+sigma <- array(NA, dim = c( ndim, ndim, ncluster))
+for(i in 1:ncluster){
+  U <- qr.Q(qr(matrix(rnorm(d_10d^2), d_10d)))
+  lambda <- rchisq(d_10d, 5) / 5
+  sigma[,,i] <- t(U) %*% (diag(lambda) %*% U)
+}
+```
+
+```{r ex5_sample_data, fig.align='center', fig.width=4, fig.height=3}
+data <- sample_gaussian_mixture(n_10d, d_10d, mu, sigma, coord, prob)
+
+# plot the first two dimensions 
+index <- sample(1:n_10d, 1000)
+ggplot() + geom_point(aes(x = data[index, 1], y = data[index, 2])) + xlab("X1") + ylab("X2") + theme_classic() 
+```
+
+### Adaptive Beta-trees histogram
+
+We construct an adaptive Beta-tree histogram and visualize (1) the average of true density within each region versus the adaptive Beta-tree histogram estimates and confidence interval, and (2) marginal distribution of $(X_3, X_4)$ conditional on being in the region $|X_1-\mu_{1,1}|\leq 2$ and $|X_2 - \mu_{1, 2}|\leq 2$. The data in this region should mostly correspond to observations in the first cluster.
+
+```{r, ex5_adaptive_tree}
+alpha <- 0.1
+adaptive_hist <- build_adaptive_histogram(as.matrix(data), 
+                                          thresh_marginal = alpha / d_10d,
+                                          thresh_interaction = qgamma(shape = d_10d - 1,rate = 1, p = 1 - alpha), 
+                                          alpha = alpha, 
+                                          method = "weighted_bonferroni")$hist
+```
+
+```{r ex5_true_prob_adaptive}
+true_probs_adaptive <- compute_probability_mass(rect = adaptive_hist[,1:(2*d_10d)], 
+                                                distribution = "gaussian_mixture", 
+                                                mu = mu, sigma = sigma, coord = coord, prob = prob)
+```
+
+```{r ex5_plot_density_adaptive}
+g_adaptive <- plot_density(true_probs_adaptive, 
+                           est_avg_density = adaptive_hist[,2*d_10d+1],
+                           lower_bound = adaptive_hist[,2*d_10d+2], 
+                           upper_bound = adaptive_hist[,2*d_10d+3], 
+                           rect = adaptive_hist[,1:(2*d_10d)])
+```
+
+```{r ex5_adaptive_plot_data, fig.align='center',fig.height=4, fig.width=10}
+plot_data_adaptive_conditional <- plot_histogram_data(X = as.matrix(data), 
+                                                      hist = adaptive_hist, 
+                                                      lower_constraint = c(mu[1,1] - 2, mu[1,2] - 2, rep(-Inf, d_10d-2)),
+                                                      upper_constraint = c(mu[1,1] + 2, mu[1,2] + 2, rep(Inf, d_10d-2)), 
+                                                      plot_coord = c(3, 4), 
+                                                      nint = 40,
+                                                      show_data = TRUE,
+                                                      ndat = 1000
+                                                      ) 
+
+g_adaptive_conditional <- plot_histogram(plot_data_adaptive_conditional, show_data = T)
+
+grid.arrange(g_adaptive_conditional, g_adaptive,  nrow = 1)
+```
+
+Note: the adaptive histogram under-estimates the probability mass inside the constraint as the true probability mass within the constraint should be about 20% whereas the estimate is only about 6%.
+
+```{r}
+sum(plot_data_adaptive_conditional$est_prob[,1]) 
+```
+
+### Bounded Beta-tree histogram
+
+We repeat the analysis with bounded Beta-trees histogram without adaptively choosing partition dimension.
+
+```{r ex5_bounded, fig.align='center',fig.height=4, fig.width=10}
+bounded_hist <- BuildHist(as.matrix(data), 
+                          alpha = alpha, method = "weighted_bonferroni", 
+                          plot = FALSE,
+                          bounded = TRUE, option = "ndat", qt = rep(1, d_10d)) 
+
+true_probs_bounded <- compute_probability_mass(rect = bounded_hist[,1:(2*d_10d)], 
+                                               distribution = "gaussian_mixture", 
+                                               mu = mu, sigma = sigma, 
+                                               coord = coord, prob = prob)
+
+g_bounded <- plot_density(true_probs_bounded, 
+                          est_avg_density = bounded_hist[,2*d_10d+1], 
+                          lower_bound = bounded_hist[,2*d_10d+2], 
+                          upper_bound = bounded_hist[,2*d_10d+3], 
+                          rect = bounded_hist[,1:(2*d_10d)])
+
+plot_data_bounded_conditional <- plot_histogram_data(X = as.matrix(data), 
+                                                     hist = bounded_hist,  
+                                                     lower_constraint = c(mu[1,1] - 2, mu[1,2] - 2, rep(-Inf, d_10d-2)),
+                                                     upper_constraint = c(mu[1,1] + 2, mu[1,2] + 2, rep(Inf, d_10d-2)), 
+                                                     plot_coord = c(3, 4), nint = 40,
+                                                     show_data = TRUE, ndat = 1000
+                                                     ) 
+
+g_bounded_conditional <- plot_histogram(plot_data_bounded_conditional, show_data = T)
+
+grid.arrange(g_bounded_conditional, g_bounded,  nrow = 1)
+```
+
+As in the adaptive histogram, we significantly underestimate the probability mass within the constraints.
+
+```{r}
+sum(plot_data_bounded_conditional$est_prob[,1]) 
+```
+
+```{r ex5_save_figure}
+ggsave(g_adaptive_conditional, filename = "ex6_adaptive_conditional.png", path = fig_dir, width = 6, height = 4, units = "in")
+ggsave(g_adaptive, filename = "ex6_adaptive.png", path = fig_dir, width = 5, height = 4, units = "in")
+ggsave(g_bounded, filename = "ex6_bounded.png", path = fig_dir, width = 5, height = 4, units = "in")
+ggsave(g_bounded_conditional, filename = "ex6_bounded_conditional.png", path = fig_dir, width = 6, height = 4, units = "in")
+```
+
+## Example 6 Beta-tree histogram with estimated marginal distribution
+
+In this example, we sample data from a $d = 30$ dimensional distribution, where $(X_1, X_2)$ is sampled from a mixture of 2-d Gaussian, and the $X_3,\ldots, X_d$ are sampled from 1-d Gaussian mixtures.
+
+The first two dimensions are sampled from the distribution $$
+0.4 \: N\left(\left(\begin{matrix}
+-1.5 \\ 0.6
+\end{matrix}\right), 
+\left(\begin{matrix}
+1 & 0.5 \\ 0.5 & 1
+\end{matrix}\right)\right) + 0.6 \:N\left(\left(\begin{matrix}
+2 \\ -1.5
+\end{matrix}\right), 
+\left(\begin{matrix}
+1 & 0 \\ 0 & 1
+\end{matrix}\right)\right). 
+$$ $X_3,\ldots, X_d$ are i.i.d. from
+
+$$
+0.5\:  N(3.5, 0.5) + 0.5\: N(6, 0.25). 
+$$
+
+```{r ex6_param}
+n_30d <- 100000
+d_30d <- 30
+```
+
+```{r ex6_sample_data}
+data <- sample_hd(n_30d, d_30d)
+# plot the first two dimensions 
+index <- sample(1:n_30d, 1000)
+ggplot() + geom_point(aes(x = data[index, 1], y = data[index, 2])) + xlab("X1") + ylab("X2") + theme_classic() 
+```
+
+Because $X_3,\ldots, X_{30}$ are independent of each other, if we estimate the marginal distributions $\hat{F}_j$ transform $X_j$ to $\hat{F}_j(X_j)$, then except for the first two variables, transformed data is from independent uniform distribution, and thus the adaptive Beta-trees histogram would mainly split in the first two dimensions, thus providing a better estimate of the density.
+
+```{r ex6_adaptive_histogram}
+alpha <- 0.1
+estimated_marginal <- estimate_marginal(data)
+X_transformed <- as.matrix(estimated_marginal$X_transformed)
+adaptive_hist_transformed <- build_adaptive_histogram(X_transformed, 
+                                                      thresh_marginal = alpha / d_30d,
+                                                      thresh_interaction = qgamma(shape = d_30d - 1,rate = 1, p = 1 - alpha), 
+                                                      alpha = alpha, 
+                                                      method = "weighted_bonferroni")
+
+adaptive_hist <- compute_histogram_original(data, 
+                                            hist_transformed = adaptive_hist_transformed$hist,
+                                            var_names = colnames(data),
+                                            estimated_marginal$est_icdf)
+```
+
+```{r ex6_plot_data, fig.align='center',fig.height=4, fig.width=10}
+plot_data_hd <- plot_histogram_data(X = as.matrix(data), 
+                                    hist = adaptive_hist,
+                                    lower_constraint = rep(-Inf, d_30d),
+                                    upper_constraint = rep(Inf, d_30d), 
+                                    plot_coord = c(1, 2), nint = 40,
+                                    show_data = T, ndat = 1000
+                                 ) 
+g_adaptive_hd <- plot_histogram(plot_data_hd)
+
+true_probs_hd <- compute_probability_mass(rect = adaptive_hist[,1:(2*d_30d)], distribution = "hd")
+g_density_hd <- plot_density(true_probs = true_probs_hd, 
+                             est_avg_density = adaptive_hist[,2*d_30d+1], 
+                             lower_bound = adaptive_hist[,2*d_30d+2], 
+                             upper_bound = adaptive_hist[,2*d_30d+3], 
+                             rect = adaptive_hist[,1:(2*d_30d)])
+
+grid.arrange(g_adaptive_hd, g_density_hd,  nrow = 1)
+```
+
+```{r ex6_save_fig}
+ggsave(g_density_hd, filename = "ex7_density.png", path = fig_dir, width = 5, height = 4, units = "in")
+ggsave(g_adaptive_hd, filename = "ex7_adaptive_hd.png", path = fig_dir, width = 6, height = 4, units = "in")
+```
+
+From the table of frequencies the adaptive histogram splits along each dimension, we can see that the first two directions are split much more frequently compared to the other coordinates.
+
+```{r ex6_split_dir}
+table(adaptive_hist_transformed$split_dir)
+```
+
+## Appendix C.6 Width of confidence intervals
+
+In this section, we examine how the width of confidence intervals vary as sample size $n$, data dimension $d$ and significance level $\alpha$ changes. The data is from a multivariate Gaussian distribution with mean 0. The covariance matrix is a random matrix with eigen values $\lambda_i = \tilde{\lambda}_i / 5$ where $\tilde{\lambda}_i\stackrel{iid}{\sim}\chi^2_5$. We report the **median** width of confidence intervals of all the histogram regions.
+
+```{r, eval = F}
+# the code below is run on the cluster 
+n_val <- c(2000, 5000, 10^4, 10^5, 5*10^5)
+alpha_val <- c(0.01, 0.05, 0.1, 0.2)
+d_vals <- c(1, 4, 8, 16)
+
+nrep <- 100
+for(i in 4){
+  if(i == 1){
+    Sigma <- 1 
+  }else{
+    U <- qr.Q(qr(matrix(rnorm(d_vals[i]^2), d_vals[i])))
+    lambda <- rchisq(d_vals[i], 5) / 5
+    Sigma <- t(U) %*% (diag(lambda) %*% U)
+  }
+  
+  result <- get_summary_stat(d = d_vals[i], B = nrep, 
+                             file_path = store_dir, 
+                             Sigma = Sigma)
+  
+  write.table(result, file = paste0(store_dir,"standard_", d, ".txt"))
+}
+```
+
+This simulation is run on the cluster. As an example, you can run the following example which considers a smaller number of repetitions
+
+```{r eval = F}
+nrep <- 10
+dim <- 4
+U <- qr.Q(qr(matrix(rnorm(dim^2), dim)))
+lambda <- rchisq(dim, 5) / 5
+Sigma <- t(U) %*% (diag(lambda) %*% U)
+result <- get_summary_stat(d = 4, B = nrep, file_path = NULL, Sigma = Sigma)
+# write.table(result, file = paste0(data_dir, "standard_", d, ".txt"))
+```
+
+The code below generates Figure 4 in Appendix C.6.
+
+```{r vis_ci_width, eval = F}
+# load data 
+d <- 16
+
+result<- read.table(paste0(data_dir, "standard_", d,".txt"))
+
+g_width <- result %>% 
+  mutate(alpha = factor(alpha)) %>% 
+  ggplot() + 
+  geom_line(aes(x = log(n), y = ci_width_50, group = alpha, color = alpha)) + 
+  geom_segment(aes(x = log(n), xend = log(n), 
+                   y = ci_width_50 - ci_width_50_sd / sqrt(nrep), 
+                   yend = ci_width_50 + ci_width_50_sd / sqrt(nrep),
+                   group = alpha,
+                   color = alpha),
+                 arrow = arrow(angle = 90, ends = "both", 
+                               length = unit(0.03, "inches"))) + 
+  geom_point(aes(x = log(n), y = ci_width_50, group = alpha, color = alpha))+
+  xlab("log(n)") + 
+  ylab("Median CI width") + 
+  theme_classic() + 
+  theme(text = element_text(size = 18))
+
+ggsave(g_width, filename = paste0(fig_dir, "standard_", d, ".png"), 
+         width = 6, height = 4, units = "in")
+```

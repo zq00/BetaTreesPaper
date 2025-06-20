@@ -1,0 +1,207 @@
+---
+title: "Example 2 Identifying cell populations indicative of GvHD"
+format: html
+editor: visual
+---
+
+```{r setup, include = F}
+knitr::opts_chunk$set(echo = TRUE)
+pacman::p_load(tidyverse, mvtnorm, stringr, MASS, spatstat, GoFKernel, goftest, igraph, 
+               tidyr, flowCore, gridExtra, mclust) 
+
+dir_home <- "/Users/zq/Library/CloudStorage/GoogleDrive-qianzhao@umass.edu/My Drive/Research/Histogram/BetaTree/JASA/"
+dir_work <- "/Users/qianzhao/Google Drive/My Drive/Research/Histogram/BetaTree/JASA/"
+
+source_code_dir <- paste0(dir_work, "V2/src/")  
+src_file_names <- list.files(source_code_dir, full.names = T)
+for(f_path in src_file_names){source(f_path)}
+
+package_code_dir <- paste0(dir_work, "V1/BetaTrees-JASA-v1/R")  
+package_file_names <- list.files(package_code_dir, full.names = T)
+for(f_path in package_file_names){source(f_path)}
+
+fig_dir <- paste0(dir_work, "V2/Fig/")
+```
+
+Graft-versus-host disease (GvHD) occurs in allogeneic hematopoietic stem cell transplant recipients when donor--immune cells attack on tissues of the recipient. In [this study](https://pubmed.ncbi.nlm.nih.gov/17531779/), researchers used flow cytometry to analyze biomarkers collected peripheral blood samples from patients who underwent bone marrow transplant. They measured 6 biomarkers from 24 patients weekly over the course of 100 days with the objective of identifying biomarkers indicating GvHD. Researchers initially identified 121 subpopulations by manual gating (using the full dataset), among which they pinpointed the population CD3+ CD4+ CD8b+ and CD3+ CD4+ CD8b+CD8+ to be correlated with occurrence of GvHD using functional linear discriminant analysis.
+
+A subset of data from this research is publicly available in the R package `mclust`. This data contains 9083 observations from one patient with GvHD and 6809 from one control patient. The data includes four biomarkers CD4, CD8b, CD3, and CD8.
+
+```{r load_data}
+data(GvHD)
+```
+
+We standardize the data to have mean 0 and standard deviation 1 (for this step, we combine the case and control data).
+
+```{r standardize}
+GvHD.mean <- colMeans(rbind(GvHD.pos, GvHD.control))
+GvHD.sd <- apply(rbind(GvHD.pos, GvHD.control), 2, sd)
+
+GvHD.pos.scaled <- t((t(GvHD.pos) - GvHD.mean) / GvHD.sd)
+GvHD.control.scaled <- t((t(GvHD.control) - GvHD.mean) / GvHD.sd)
+
+d <- ncol(GvHD.pos.scaled)
+```
+
+We compute the adaptive Beta-trees histogram at 80% confidence level for the GvHD positive and control individuals. We set a seed to keep our results consistent.
+
+```{r set_seed}
+set.seed(20)
+```
+
+```{r adaptive_hist}
+alpha <- 0.2
+hist_adaptive_pos <- build_adaptive_histogram(as.matrix(GvHD.pos.scaled), 
+                         thresh_marginal = alpha / d,
+                         thresh_interaction = qgamma(shape = d - 1,rate = 1, p = 1 - alpha), 
+                         alpha = alpha, 
+                         method = "weighted_bonferroni")$hist
+
+hist_adaptive_control <- build_adaptive_histogram(as.matrix(GvHD.control.scaled), 
+                         thresh_marginal = alpha / d,
+                         thresh_interaction = qgamma(shape = d - 1,rate = 1, p = 1 - alpha), 
+                         alpha = alpha, 
+                         method = "weighted_bonferroni")$hist
+```
+
+We identify modes from the adaptive Beta-tree histograms using the approximate algorithm with $L = 50$ and $B = 50,000$ (*Note* results vary from run to run, partly because the sample size is small)
+
+```{r modes}
+modes_adaptive_pos <- FindModesApproximate(hist_adaptive_pos, d = d, L = 50, B = 50000)
+modes_adaptive_control <- FindModesApproximate(hist_adaptive_control, d = d, L = 50, B = 50000)
+```
+
+```{r mode_location}
+case_lower <- round(hist_adaptive_pos[modes_adaptive_pos$mode, 1:d], 2)
+case_upper <- round(hist_adaptive_pos[modes_adaptive_pos$mode, (d+1):(2*d)], 2)
+
+control_lower <- round(hist_adaptive_control[modes_adaptive_control$mode, 1:d], 2)
+control_upper <- round(hist_adaptive_control[modes_adaptive_control$mode, (d+1):(2*d)], 2)
+
+cat("Case lower:\n")
+print(case_lower)
+cat("Case upper:\n")
+print(case_upper)
+cat("Control lower: \n")
+print(control_lower)
+cat("Control upper:\n")
+print(control_upper)
+```
+
+We identified two modes from the sample from GvHD positive individual, one at CD3+CD8b+CD4+, which corresponds to the finding in the paper. The second cluster correspond to CD3-CD8b-CD4-CD8-, which seems to correspond to the second and third the clusters of samples of the control individual. We now visualize the two histograms at the two clusters from GvHD patient corresponding to `CD3>0, CD8>0` and `CD3<0, CD8<0`. We visualize the two bio-markers `CD4` and `CD8b`.
+
+```{r plot_data_1}
+# CD3 < 0 and CD8 < 0
+plot_data_pos_1 <- plot_histogram_data(GvHD.pos.scaled, 
+                                       hist_adaptive_pos, d, 
+                                lower_constraint = c(-Inf, -Inf, -Inf, -Inf), 
+                                upper_constraint = c(Inf, Inf, 0, 0), 
+                                plot_coord = c(1, 2), 
+                                nint = 20, 
+                                plot_true_density = FALSE)
+data_pos_1 <- dplyr::filter(as_tibble(GvHD.pos.scaled), CD3 < 0, CD8 < 0)
+
+
+plot_data_control_1 <- plot_histogram_data(GvHD.control.scaled, 
+                                       hist_adaptive_control, d, 
+                                lower_constraint = c(-Inf, -Inf, -Inf, -Inf), 
+                                upper_constraint = c(Inf, Inf, 0, 0), 
+                                plot_coord = c(1, 2), 
+                                nint = 20, 
+                                plot_true_density = FALSE)
+data_control_1 <- dplyr::filter(as_tibble(GvHD.control.scaled), CD3 < 0, CD8 < 0)
+
+# proportion of samples in case patient in this cluster
+nrow(data_pos_1) / nrow(GvHD.pos.scaled)
+# proportion of samples in control patient in this cluster
+nrow(data_control_1) / nrow(GvHD.control.scaled)
+```
+
+```{r plot_data_2}
+# CD3 > 0 and CD8 > 0
+plot_data_pos_2 <- plot_histogram_data(GvHD.pos.scaled, 
+                                       hist_adaptive_pos, d, 
+                                lower_constraint = c(-Inf, -Inf, 0, 0), 
+                                upper_constraint = c(Inf, Inf,  Inf, Inf), 
+                                plot_coord = c(1, 2), 
+                                nint = 20, 
+                                plot_true_density = FALSE)
+data_pos_2 <- dplyr::filter(as_tibble(GvHD.pos.scaled), CD3 > 0, CD8 > 0)
+
+
+plot_data_control_2 <- plot_histogram_data(GvHD.control.scaled, 
+                                       hist_adaptive_control, d, 
+                                lower_constraint = c(-Inf, -Inf, 0, 0), 
+                                upper_constraint = c(Inf, Inf, Inf, Inf), 
+                                plot_coord = c(1, 2), 
+                                nint = 20, 
+                                plot_true_density = FALSE)
+data_control_2 <- dplyr::filter(as_tibble(GvHD.control.scaled), CD3 > 0, CD8 > 0)
+
+# proportion of samples in case patient in this cluster
+nrow(data_pos_2) / nrow(GvHD.pos.scaled)
+# proportion of samples in control patient in this cluster
+nrow(data_control_2) / nrow(GvHD.control.scaled)
+```
+
+```{r plot}
+lim_2 <- c(-2, 4)
+lim_1 <- c(-2.5, 2.5)
+
+for(i in 1:2){
+  for(type in c("pos", "control")){
+    plot_data <- get(paste0("plot_data_", type, "_", i))
+    dat <- get(paste0("data_", type, "_", i))
+    lim <- get(paste0("lim_", i))
+    title = paste0("Cluster ", i, " " ,ifelse(type == "pos", "Case", "Control"))
+    
+    index <- if(nrow(dat) > 1000){
+    sample(1:nrow(dat), 1000, replace = F)
+    }else{
+      1:nrow(dat)
+    }
+    
+    grid_lower_x <-  plot_data$grid_lower[,plot_data$plot_coord[1]]
+    grid_upper_x <- plot_data$grid_upper[,plot_data$plot_coord[1]]
+    grid_lower_y <-  plot_data$grid_lower[,plot_data$plot_coord[2]]
+    grid_upper_y <- plot_data$grid_upper[,plot_data$plot_coord[2]]
+    
+    grid_volume <- (grid_upper_y - grid_lower_y) * (grid_upper_x - grid_lower_x)
+    grid_density <- plot_data$est_prob[,1] / sum(plot_data$est_prob[,1]) / grid_volume
+    
+    g <- ggplot() + 
+      geom_rect(aes(xmin = grid_lower_x , 
+                    xmax = grid_upper_x,
+                    ymin  = grid_lower_y,
+                    ymax = grid_upper_y, 
+                    fill =  grid_density ) ) + 
+      scale_fill_gradient2(low = "white", high = "#08306b",mid = "#6baed6",
+                           midpoint = quantile(grid_density, 0.99), 
+                           aesthetics = "fill",
+                           name = "density") + 
+      geom_point(aes(x = dat$CD4[index], y = dat$CD8b[index]),  alpha = 0.1, size = 0.5) + 
+    scale_x_continuous(expand = expansion(0),
+                     limits = lim
+                     ) + # see https://ggplot2-book.org/scales-position 
+  scale_y_continuous(expand = expansion(0),
+                     limits = lim
+                     ) +
+      theme_classic() +  
+  theme(panel.background = element_blank(),
+            panel.border=element_blank(),
+        plot.title = element_text(hjust = 0.5),
+        text = element_text(size = 18)
+        ) + 
+  labs(title = title, 
+       x = "CD4", 
+       y = "CD8b") 
+
+    ggsave(filename =  paste0("GvHD_", type, "_", i, ".png"), plot = g,path = fig_dir, width = 4.5, height = 3, units = "in")
+ }
+}
+
+
+
+  
+
+```
