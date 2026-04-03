@@ -19,14 +19,14 @@ dir_home <- "/Users/zq/qianzhao@umass.edu - Google Drive/My Drive/Research/Histo
 dir_work <- "/Users/qianzhao/Google Drive/My Drive/Research/Histogram/"
 
 # load the BetaTrees package
-load_all(path = paste0(dir_home, "BetaTree/JASA/V1/BetaTrees-JASA-v1/R/"))
+load_all(path = paste0(dir_work, "BetaTree/JASA/V1/BetaTrees-JASA-v1/R/"))
 
 # load functions 
-source(paste0(dir_home,  "BetaTree/JASA/V2/src/univariate.R"))
-source(paste0(dir_home,  "BetaTree/JASA/V2/src/sample_obs.R"))
-source(paste0(dir_home,  "BetaTree/JASA/V2/src/adaptive.R"))
-source(paste0(dir_home,  "BetaTree/JASA/V2/src/summary.R"))
-source(paste0(dir_home,  "BetaTree/JASA/V2/src/approximate_mode.R"))
+source(paste0(dir_work,  "BetaTree/JASA/V2/src/univariate.R"))
+source(paste0(dir_work,  "BetaTree/JASA/V2/src/sample_obs.R"))
+source(paste0(dir_work,  "BetaTree/JASA/V2/src/adaptive.R"))
+source(paste0(dir_work,  "BetaTree/JASA/V2/src/summary.R"))
+source(paste0(dir_work,  "BetaTree/JASA/V2/src/approximate_mode.R"))
 
 fig_dir <- paste0(dir_home, "BetaTree/JASA/V2/Fig/")
 data_dir <- paste0("/Users/zq/qianzhao@umass.edu - Google Drive/My Drive/Research/Histogram/Experiments/data/")
@@ -143,7 +143,7 @@ FigMode2d
 FigCI2d
 ```
 
-```{r include = F, echo = F}
+```{r include = F, eval = F}
 ggsave(filename =  "mode.png", plot = FigMode2d,path = fig_dir, width = 4.5, height = 3, units = "in")
 ggsave(filename =  "ci.png", plot = FigCI2d,path = fig_dir, width = 4.5, height = 3, units = "in")
 
@@ -231,8 +231,9 @@ We consider a mode is a "true positive" if $d(\mu, R)\leq 2$ for any of the true
 We use the function \`summary_mode_finding\` to compute summary statistics of the mode hunting algorithm. Since we repeat the simulation multiple times, we run the code on a cluster and include the script. Below we show an example of how to run one simulation (with a small number of repetitions). You can choose different paramters to evaluate the algorithm for a variety of parameters.
 
 ```{r mode_approximate_ex}
+# Set parameters to reproduce Table 1-5 in supplement 
 nrep <- 5
-result <- summary_mode_finding(n = 50000, d = 4, m = 5, method = "approximate", nrep = nrep, ndim = 4, L = 50, B = 10000)
+result <- summary_mode_finding(n = 5000, d = 4, m = 5, method = "approximate", nrep = nrep, ndim = 4, L = 50, B = 1000)
 # code for exact algorithm
 # result <- summary_mode_finding(n = 1000, d = 4, m = 5, method = "exact", nrep = nrep, ndim = 4, cutoff = 5)
 ```
