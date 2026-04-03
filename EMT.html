@@ -2,7 +2,7 @@
 <html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en"><head>
 
 <meta charset="utf-8">
-<meta name="generator" content="quarto-1.5.57">
+<meta name="generator" content="quarto-1.6.42">
 
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
 
@@ -63,10 +63,10 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <script src="EMT_files/libs/quarto-html/tippy.umd.min.js"></script>
 <script src="EMT_files/libs/quarto-html/anchor.min.js"></script>
 <link href="EMT_files/libs/quarto-html/tippy.css" rel="stylesheet">
-<link href="EMT_files/libs/quarto-html/quarto-syntax-highlighting.css" rel="stylesheet" id="quarto-text-highlighting-styles">
+<link href="EMT_files/libs/quarto-html/quarto-syntax-highlighting-2f5df379a58b258e96c21c0638c20c03.css" rel="stylesheet" id="quarto-text-highlighting-styles">
 <script src="EMT_files/libs/bootstrap/bootstrap.min.js"></script>
 <link href="EMT_files/libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
-<link href="EMT_files/libs/bootstrap/bootstrap.min.css" rel="stylesheet" id="quarto-bootstrap" data-mode="light">
+<link href="EMT_files/libs/bootstrap/bootstrap-c0367b04c37547644fece4185067e4a7.min.css" rel="stylesheet" append-hash="true" id="quarto-bootstrap" data-mode="light">
 
 
 </head>
@@ -230,7 +230,8 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 </div>
 <p>Number of cells in E/M phenotype each day:</p>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb16"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb16-1"><a href="#cb16-1" aria-hidden="true" tabindex="-1"></a><span class="fu">cat</span>(<span class="st">"Control cells in E/M phenotype:"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb16"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb16-1"><a href="#cb16-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Table 6 in supplement </span></span>
+<span id="cb16-2"><a href="#cb16-2" aria-hidden="true" tabindex="-1"></a><span class="fu">cat</span>(<span class="st">"Control cells in E/M phenotype:"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>Control cells in E/M phenotype:</code></pre>
 </div>
@@ -447,70 +448,71 @@ Period:  2
 Period:  3 </code></pre>
 </div>
 </div>
-<div class="cell">
-<div class="sourceCode cell-code" id="cb33"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb33-1"><a href="#cb33-1" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span>(i <span class="cf">in</span> <span class="dv">1</span><span class="sc">:</span><span class="dv">3</span>){</span>
-<span id="cb33-2"><a href="#cb33-2" aria-hidden="true" tabindex="-1"></a>  <span class="cf">for</span>(type <span class="cf">in</span> <span class="fu">c</span>(<span class="st">"treated"</span>, <span class="st">"control"</span>)){</span>
-<span id="cb33-3"><a href="#cb33-3" aria-hidden="true" tabindex="-1"></a>    </span>
-<span id="cb33-4"><a href="#cb33-4" aria-hidden="true" tabindex="-1"></a>    plot_data <span class="ot">&lt;-</span> plot_marginal_data[[i]][[<span class="fu">paste0</span>(<span class="st">"plot_data_"</span>, type, <span class="st">"_marginal"</span>)]]</span>
-<span id="cb33-5"><a href="#cb33-5" aria-hidden="true" tabindex="-1"></a>    kernel_est <span class="ot">&lt;-</span> plot_marginal_data[[i]][[<span class="fu">paste0</span>(<span class="st">"kernel_"</span>, type)]]</span>
-<span id="cb33-6"><a href="#cb33-6" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb33-7"><a href="#cb33-7" aria-hidden="true" tabindex="-1"></a>    grid <span class="ot">&lt;-</span> <span class="fu">expand.grid</span>( kernel_est<span class="sc">$</span>x, kernel_est<span class="sc">$</span>y)</span>
-<span id="cb33-8"><a href="#cb33-8" aria-hidden="true" tabindex="-1"></a>    grid_val <span class="ot">&lt;-</span> <span class="fu">tibble</span>(</span>
-<span id="cb33-9"><a href="#cb33-9" aria-hidden="true" tabindex="-1"></a>      <span class="at">x =</span> grid[,<span class="dv">1</span>],</span>
-<span id="cb33-10"><a href="#cb33-10" aria-hidden="true" tabindex="-1"></a>      <span class="at">y =</span> grid[,<span class="dv">2</span>],</span>
-<span id="cb33-11"><a href="#cb33-11" aria-hidden="true" tabindex="-1"></a>      <span class="at">z =</span> <span class="fu">as.vector</span>(kernel_est<span class="sc">$</span>z)</span>
-<span id="cb33-12"><a href="#cb33-12" aria-hidden="true" tabindex="-1"></a>    )  <span class="sc">%&gt;%</span> </span>
-<span id="cb33-13"><a href="#cb33-13" aria-hidden="true" tabindex="-1"></a>      dplyr<span class="sc">::</span><span class="fu">filter</span>(x <span class="sc">&gt;</span> <span class="fl">0.5</span>, y <span class="sc">&gt;</span> <span class="fl">0.5</span>)</span>
-<span id="cb33-14"><a href="#cb33-14" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb33-15"><a href="#cb33-15" aria-hidden="true" tabindex="-1"></a>    <span class="cf">if</span>(type <span class="sc">==</span> <span class="st">"treated"</span>){</span>
-<span id="cb33-16"><a href="#cb33-16" aria-hidden="true" tabindex="-1"></a>      title <span class="ot">&lt;-</span> <span class="fu">paste0</span>(<span class="st">"Period "</span>, i, <span class="st">"  Treated"</span> )</span>
-<span id="cb33-17"><a href="#cb33-17" aria-hidden="true" tabindex="-1"></a>    }<span class="cf">else</span>{</span>
-<span id="cb33-18"><a href="#cb33-18" aria-hidden="true" tabindex="-1"></a>      title <span class="ot">&lt;-</span> <span class="fu">paste0</span>(<span class="st">"Period "</span>, i, <span class="st">"  Control"</span> )</span>
-<span id="cb33-19"><a href="#cb33-19" aria-hidden="true" tabindex="-1"></a>    }</span>
-<span id="cb33-20"><a href="#cb33-20" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb33-21"><a href="#cb33-21" aria-hidden="true" tabindex="-1"></a>    filename <span class="ot">&lt;-</span> <span class="fu">paste0</span>(fig_dir, <span class="st">"Podoplanin_CD44_marginal_"</span>,i, <span class="st">"_"</span>, type, <span class="st">".png"</span>)</span>
-<span id="cb33-22"><a href="#cb33-22" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb33-23"><a href="#cb33-23" aria-hidden="true" tabindex="-1"></a>    grid_lower_x <span class="ot">&lt;-</span>  plot_data<span class="sc">$</span>grid_lower[,plot_data<span class="sc">$</span>plot_coord[<span class="dv">1</span>]]</span>
-<span id="cb33-24"><a href="#cb33-24" aria-hidden="true" tabindex="-1"></a>    grid_upper_x <span class="ot">&lt;-</span> plot_data<span class="sc">$</span>grid_upper[,plot_data<span class="sc">$</span>plot_coord[<span class="dv">1</span>]]</span>
-<span id="cb33-25"><a href="#cb33-25" aria-hidden="true" tabindex="-1"></a>    grid_lower_y <span class="ot">&lt;-</span>  plot_data<span class="sc">$</span>grid_lower[,plot_data<span class="sc">$</span>plot_coord[<span class="dv">2</span>]]</span>
-<span id="cb33-26"><a href="#cb33-26" aria-hidden="true" tabindex="-1"></a>    grid_upper_y <span class="ot">&lt;-</span> plot_data<span class="sc">$</span>grid_upper[,plot_data<span class="sc">$</span>plot_coord[<span class="dv">2</span>]]</span>
-<span id="cb33-27"><a href="#cb33-27" aria-hidden="true" tabindex="-1"></a>    </span>
-<span id="cb33-28"><a href="#cb33-28" aria-hidden="true" tabindex="-1"></a>    grid_volume <span class="ot">&lt;-</span> (grid_upper_y <span class="sc">-</span> grid_lower_y) <span class="sc">*</span> (grid_upper_x <span class="sc">-</span> grid_lower_x)</span>
-<span id="cb33-29"><a href="#cb33-29" aria-hidden="true" tabindex="-1"></a>    grid_density <span class="ot">&lt;-</span> plot_data<span class="sc">$</span>est_prob[,<span class="dv">1</span>] <span class="sc">/</span> <span class="fu">sum</span>(plot_data<span class="sc">$</span>est_prob[,<span class="dv">1</span>]) <span class="sc">/</span> grid_volume</span>
-<span id="cb33-30"><a href="#cb33-30" aria-hidden="true" tabindex="-1"></a>  </span>
-<span id="cb33-31"><a href="#cb33-31" aria-hidden="true" tabindex="-1"></a>    g <span class="ot">&lt;-</span> <span class="fu">ggplot</span>() <span class="sc">+</span> </span>
-<span id="cb33-32"><a href="#cb33-32" aria-hidden="true" tabindex="-1"></a>      <span class="fu">geom_rect</span>(<span class="fu">aes</span>(<span class="at">xmin =</span> grid_lower_x , </span>
-<span id="cb33-33"><a href="#cb33-33" aria-hidden="true" tabindex="-1"></a>                    <span class="at">xmax =</span> grid_upper_x,</span>
-<span id="cb33-34"><a href="#cb33-34" aria-hidden="true" tabindex="-1"></a>                    <span class="at">ymin  =</span> grid_lower_y,</span>
-<span id="cb33-35"><a href="#cb33-35" aria-hidden="true" tabindex="-1"></a>                    <span class="at">ymax =</span> grid_upper_y, </span>
-<span id="cb33-36"><a href="#cb33-36" aria-hidden="true" tabindex="-1"></a>                    <span class="at">fill =</span>  grid_density ) ) <span class="sc">+</span> </span>
-<span id="cb33-37"><a href="#cb33-37" aria-hidden="true" tabindex="-1"></a>      <span class="fu">scale_fill_gradient2</span>(<span class="at">low =</span> <span class="st">"white"</span>, <span class="at">high =</span> <span class="st">"#08306b"</span>,<span class="at">mid =</span> <span class="st">"#6baed6"</span>,</span>
-<span id="cb33-38"><a href="#cb33-38" aria-hidden="true" tabindex="-1"></a>                           <span class="at">midpoint =</span> <span class="fu">quantile</span>(grid_density, <span class="fl">0.99</span>), </span>
-<span id="cb33-39"><a href="#cb33-39" aria-hidden="true" tabindex="-1"></a>                           <span class="at">aesthetics =</span> <span class="st">"fill"</span>,</span>
-<span id="cb33-40"><a href="#cb33-40" aria-hidden="true" tabindex="-1"></a>                           <span class="at">name =</span> <span class="st">"density"</span>) <span class="sc">+</span> </span>
-<span id="cb33-41"><a href="#cb33-41" aria-hidden="true" tabindex="-1"></a>      <span class="fu">geom_contour</span>(<span class="fu">aes</span>(<span class="at">x =</span> x, <span class="at">y =</span> y, </span>
-<span id="cb33-42"><a href="#cb33-42" aria-hidden="true" tabindex="-1"></a>                       <span class="at">z =</span> z), </span>
-<span id="cb33-43"><a href="#cb33-43" aria-hidden="true" tabindex="-1"></a>                   <span class="at">breaks =</span> <span class="fu">quantile</span>(grid_val<span class="sc">$</span>z, <span class="fu">c</span>(<span class="fl">0.75</span>, <span class="fl">0.85</span>, <span class="fl">0.95</span>)),</span>
-<span id="cb33-44"><a href="#cb33-44" aria-hidden="true" tabindex="-1"></a>                   <span class="at">color =</span> <span class="st">"grey30"</span>, <span class="at">data =</span> grid_val) <span class="sc">+</span> </span>
-<span id="cb33-45"><a href="#cb33-45" aria-hidden="true" tabindex="-1"></a>     <span class="fu">scale_x_continuous</span>(<span class="at">expand =</span> <span class="fu">expansion</span>(<span class="dv">0</span>),</span>
-<span id="cb33-46"><a href="#cb33-46" aria-hidden="true" tabindex="-1"></a>                     <span class="at">limits =</span> <span class="fu">c</span>(<span class="fl">1.5</span>, <span class="dv">4</span>)) <span class="sc">+</span> <span class="co"># see https://ggplot2-book.org/scales-position </span></span>
-<span id="cb33-47"><a href="#cb33-47" aria-hidden="true" tabindex="-1"></a>  <span class="fu">scale_y_continuous</span>(<span class="at">expand =</span> <span class="fu">expansion</span>(<span class="dv">0</span>), </span>
-<span id="cb33-48"><a href="#cb33-48" aria-hidden="true" tabindex="-1"></a>                     <span class="at">limits =</span> <span class="fu">c</span>(<span class="fl">0.8</span>, <span class="dv">3</span>)) <span class="sc">+</span></span>
-<span id="cb33-49"><a href="#cb33-49" aria-hidden="true" tabindex="-1"></a>      <span class="fu">theme_classic</span>() <span class="sc">+</span>  </span>
-<span id="cb33-50"><a href="#cb33-50" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme</span>(<span class="at">panel.background =</span> <span class="fu">element_blank</span>(),</span>
-<span id="cb33-51"><a href="#cb33-51" aria-hidden="true" tabindex="-1"></a>            <span class="at">panel.border=</span><span class="fu">element_blank</span>(),</span>
-<span id="cb33-52"><a href="#cb33-52" aria-hidden="true" tabindex="-1"></a>        <span class="at">plot.title =</span> <span class="fu">element_text</span>(<span class="at">hjust =</span> <span class="fl">0.5</span>),</span>
-<span id="cb33-53"><a href="#cb33-53" aria-hidden="true" tabindex="-1"></a>        <span class="at">text =</span> <span class="fu">element_text</span>(<span class="at">size =</span> <span class="dv">18</span>)</span>
-<span id="cb33-54"><a href="#cb33-54" aria-hidden="true" tabindex="-1"></a>        ) <span class="sc">+</span> </span>
-<span id="cb33-55"><a href="#cb33-55" aria-hidden="true" tabindex="-1"></a>  <span class="fu">labs</span>(<span class="at">title =</span> title, </span>
-<span id="cb33-56"><a href="#cb33-56" aria-hidden="true" tabindex="-1"></a>       <span class="at">x =</span> <span class="st">"Podoplanin"</span>, </span>
-<span id="cb33-57"><a href="#cb33-57" aria-hidden="true" tabindex="-1"></a>       <span class="at">y =</span> <span class="st">"CD44"</span>) </span>
-<span id="cb33-58"><a href="#cb33-58" aria-hidden="true" tabindex="-1"></a>  </span>
-<span id="cb33-59"><a href="#cb33-59" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb33-60"><a href="#cb33-60" aria-hidden="true" tabindex="-1"></a><span class="fu">ggsave</span>(g, <span class="at">filename =</span> filename, </span>
-<span id="cb33-61"><a href="#cb33-61" aria-hidden="true" tabindex="-1"></a>         <span class="at">width =</span> <span class="dv">5</span>, <span class="at">height =</span> <span class="dv">4</span>, <span class="at">units =</span> <span class="st">"in"</span>)</span>
-<span id="cb33-62"><a href="#cb33-62" aria-hidden="true" tabindex="-1"></a>  }</span>
-<span id="cb33-63"><a href="#cb33-63" aria-hidden="true" tabindex="-1"></a>}</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell" data-layout-align="center">
+<div class="sourceCode cell-code" id="cb33"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb33-1"><a href="#cb33-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Figure 4 in supplement </span></span>
+<span id="cb33-2"><a href="#cb33-2" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span>(i <span class="cf">in</span> <span class="dv">1</span><span class="sc">:</span><span class="dv">3</span>){</span>
+<span id="cb33-3"><a href="#cb33-3" aria-hidden="true" tabindex="-1"></a>  <span class="cf">for</span>(type <span class="cf">in</span> <span class="fu">c</span>(<span class="st">"treated"</span>, <span class="st">"control"</span>)){</span>
+<span id="cb33-4"><a href="#cb33-4" aria-hidden="true" tabindex="-1"></a>    </span>
+<span id="cb33-5"><a href="#cb33-5" aria-hidden="true" tabindex="-1"></a>    plot_data <span class="ot">&lt;-</span> plot_marginal_data[[i]][[<span class="fu">paste0</span>(<span class="st">"plot_data_"</span>, type, <span class="st">"_marginal"</span>)]]</span>
+<span id="cb33-6"><a href="#cb33-6" aria-hidden="true" tabindex="-1"></a>    kernel_est <span class="ot">&lt;-</span> plot_marginal_data[[i]][[<span class="fu">paste0</span>(<span class="st">"kernel_"</span>, type)]]</span>
+<span id="cb33-7"><a href="#cb33-7" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb33-8"><a href="#cb33-8" aria-hidden="true" tabindex="-1"></a>    grid <span class="ot">&lt;-</span> <span class="fu">expand.grid</span>( kernel_est<span class="sc">$</span>x, kernel_est<span class="sc">$</span>y)</span>
+<span id="cb33-9"><a href="#cb33-9" aria-hidden="true" tabindex="-1"></a>    grid_val <span class="ot">&lt;-</span> <span class="fu">tibble</span>(</span>
+<span id="cb33-10"><a href="#cb33-10" aria-hidden="true" tabindex="-1"></a>      <span class="at">x =</span> grid[,<span class="dv">1</span>],</span>
+<span id="cb33-11"><a href="#cb33-11" aria-hidden="true" tabindex="-1"></a>      <span class="at">y =</span> grid[,<span class="dv">2</span>],</span>
+<span id="cb33-12"><a href="#cb33-12" aria-hidden="true" tabindex="-1"></a>      <span class="at">z =</span> <span class="fu">as.vector</span>(kernel_est<span class="sc">$</span>z)</span>
+<span id="cb33-13"><a href="#cb33-13" aria-hidden="true" tabindex="-1"></a>    )  <span class="sc">%&gt;%</span> </span>
+<span id="cb33-14"><a href="#cb33-14" aria-hidden="true" tabindex="-1"></a>      dplyr<span class="sc">::</span><span class="fu">filter</span>(x <span class="sc">&gt;</span> <span class="fl">0.5</span>, y <span class="sc">&gt;</span> <span class="fl">0.5</span>)</span>
+<span id="cb33-15"><a href="#cb33-15" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb33-16"><a href="#cb33-16" aria-hidden="true" tabindex="-1"></a>    <span class="cf">if</span>(type <span class="sc">==</span> <span class="st">"treated"</span>){</span>
+<span id="cb33-17"><a href="#cb33-17" aria-hidden="true" tabindex="-1"></a>      title <span class="ot">&lt;-</span> <span class="fu">paste0</span>(<span class="st">"Period "</span>, i, <span class="st">"  Treated"</span> )</span>
+<span id="cb33-18"><a href="#cb33-18" aria-hidden="true" tabindex="-1"></a>    }<span class="cf">else</span>{</span>
+<span id="cb33-19"><a href="#cb33-19" aria-hidden="true" tabindex="-1"></a>      title <span class="ot">&lt;-</span> <span class="fu">paste0</span>(<span class="st">"Period "</span>, i, <span class="st">"  Control"</span> )</span>
+<span id="cb33-20"><a href="#cb33-20" aria-hidden="true" tabindex="-1"></a>    }</span>
+<span id="cb33-21"><a href="#cb33-21" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb33-22"><a href="#cb33-22" aria-hidden="true" tabindex="-1"></a>    filename <span class="ot">&lt;-</span> <span class="fu">paste0</span>(fig_dir, <span class="st">"Podoplanin_CD44_marginal_"</span>,i, <span class="st">"_"</span>, type, <span class="st">".png"</span>)</span>
+<span id="cb33-23"><a href="#cb33-23" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb33-24"><a href="#cb33-24" aria-hidden="true" tabindex="-1"></a>    grid_lower_x <span class="ot">&lt;-</span>  plot_data<span class="sc">$</span>grid_lower[,plot_data<span class="sc">$</span>plot_coord[<span class="dv">1</span>]]</span>
+<span id="cb33-25"><a href="#cb33-25" aria-hidden="true" tabindex="-1"></a>    grid_upper_x <span class="ot">&lt;-</span> plot_data<span class="sc">$</span>grid_upper[,plot_data<span class="sc">$</span>plot_coord[<span class="dv">1</span>]]</span>
+<span id="cb33-26"><a href="#cb33-26" aria-hidden="true" tabindex="-1"></a>    grid_lower_y <span class="ot">&lt;-</span>  plot_data<span class="sc">$</span>grid_lower[,plot_data<span class="sc">$</span>plot_coord[<span class="dv">2</span>]]</span>
+<span id="cb33-27"><a href="#cb33-27" aria-hidden="true" tabindex="-1"></a>    grid_upper_y <span class="ot">&lt;-</span> plot_data<span class="sc">$</span>grid_upper[,plot_data<span class="sc">$</span>plot_coord[<span class="dv">2</span>]]</span>
+<span id="cb33-28"><a href="#cb33-28" aria-hidden="true" tabindex="-1"></a>    </span>
+<span id="cb33-29"><a href="#cb33-29" aria-hidden="true" tabindex="-1"></a>    grid_volume <span class="ot">&lt;-</span> (grid_upper_y <span class="sc">-</span> grid_lower_y) <span class="sc">*</span> (grid_upper_x <span class="sc">-</span> grid_lower_x)</span>
+<span id="cb33-30"><a href="#cb33-30" aria-hidden="true" tabindex="-1"></a>    grid_density <span class="ot">&lt;-</span> plot_data<span class="sc">$</span>est_prob[,<span class="dv">1</span>] <span class="sc">/</span> <span class="fu">sum</span>(plot_data<span class="sc">$</span>est_prob[,<span class="dv">1</span>]) <span class="sc">/</span> grid_volume</span>
+<span id="cb33-31"><a href="#cb33-31" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb33-32"><a href="#cb33-32" aria-hidden="true" tabindex="-1"></a>    g <span class="ot">&lt;-</span> <span class="fu">ggplot</span>() <span class="sc">+</span> </span>
+<span id="cb33-33"><a href="#cb33-33" aria-hidden="true" tabindex="-1"></a>      <span class="fu">geom_rect</span>(<span class="fu">aes</span>(<span class="at">xmin =</span> grid_lower_x , </span>
+<span id="cb33-34"><a href="#cb33-34" aria-hidden="true" tabindex="-1"></a>                    <span class="at">xmax =</span> grid_upper_x,</span>
+<span id="cb33-35"><a href="#cb33-35" aria-hidden="true" tabindex="-1"></a>                    <span class="at">ymin  =</span> grid_lower_y,</span>
+<span id="cb33-36"><a href="#cb33-36" aria-hidden="true" tabindex="-1"></a>                    <span class="at">ymax =</span> grid_upper_y, </span>
+<span id="cb33-37"><a href="#cb33-37" aria-hidden="true" tabindex="-1"></a>                    <span class="at">fill =</span>  grid_density ) ) <span class="sc">+</span> </span>
+<span id="cb33-38"><a href="#cb33-38" aria-hidden="true" tabindex="-1"></a>      <span class="fu">scale_fill_gradient2</span>(<span class="at">low =</span> <span class="st">"white"</span>, <span class="at">high =</span> <span class="st">"#08306b"</span>,<span class="at">mid =</span> <span class="st">"#6baed6"</span>,</span>
+<span id="cb33-39"><a href="#cb33-39" aria-hidden="true" tabindex="-1"></a>                           <span class="at">midpoint =</span> <span class="fu">quantile</span>(grid_density, <span class="fl">0.99</span>), </span>
+<span id="cb33-40"><a href="#cb33-40" aria-hidden="true" tabindex="-1"></a>                           <span class="at">aesthetics =</span> <span class="st">"fill"</span>,</span>
+<span id="cb33-41"><a href="#cb33-41" aria-hidden="true" tabindex="-1"></a>                           <span class="at">name =</span> <span class="st">"density"</span>) <span class="sc">+</span> </span>
+<span id="cb33-42"><a href="#cb33-42" aria-hidden="true" tabindex="-1"></a>      <span class="fu">geom_contour</span>(<span class="fu">aes</span>(<span class="at">x =</span> x, <span class="at">y =</span> y, </span>
+<span id="cb33-43"><a href="#cb33-43" aria-hidden="true" tabindex="-1"></a>                       <span class="at">z =</span> z), </span>
+<span id="cb33-44"><a href="#cb33-44" aria-hidden="true" tabindex="-1"></a>                   <span class="at">breaks =</span> <span class="fu">quantile</span>(grid_val<span class="sc">$</span>z, <span class="fu">c</span>(<span class="fl">0.75</span>, <span class="fl">0.85</span>, <span class="fl">0.95</span>)),</span>
+<span id="cb33-45"><a href="#cb33-45" aria-hidden="true" tabindex="-1"></a>                   <span class="at">color =</span> <span class="st">"grey30"</span>, <span class="at">data =</span> grid_val) <span class="sc">+</span> </span>
+<span id="cb33-46"><a href="#cb33-46" aria-hidden="true" tabindex="-1"></a>     <span class="fu">scale_x_continuous</span>(<span class="at">expand =</span> <span class="fu">expansion</span>(<span class="dv">0</span>),</span>
+<span id="cb33-47"><a href="#cb33-47" aria-hidden="true" tabindex="-1"></a>                     <span class="at">limits =</span> <span class="fu">c</span>(<span class="fl">1.5</span>, <span class="dv">4</span>)) <span class="sc">+</span> <span class="co"># see https://ggplot2-book.org/scales-position </span></span>
+<span id="cb33-48"><a href="#cb33-48" aria-hidden="true" tabindex="-1"></a>  <span class="fu">scale_y_continuous</span>(<span class="at">expand =</span> <span class="fu">expansion</span>(<span class="dv">0</span>), </span>
+<span id="cb33-49"><a href="#cb33-49" aria-hidden="true" tabindex="-1"></a>                     <span class="at">limits =</span> <span class="fu">c</span>(<span class="fl">0.8</span>, <span class="dv">3</span>)) <span class="sc">+</span></span>
+<span id="cb33-50"><a href="#cb33-50" aria-hidden="true" tabindex="-1"></a>      <span class="fu">theme_classic</span>() <span class="sc">+</span>  </span>
+<span id="cb33-51"><a href="#cb33-51" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme</span>(<span class="at">panel.background =</span> <span class="fu">element_blank</span>(),</span>
+<span id="cb33-52"><a href="#cb33-52" aria-hidden="true" tabindex="-1"></a>            <span class="at">panel.border=</span><span class="fu">element_blank</span>(),</span>
+<span id="cb33-53"><a href="#cb33-53" aria-hidden="true" tabindex="-1"></a>        <span class="at">plot.title =</span> <span class="fu">element_text</span>(<span class="at">hjust =</span> <span class="fl">0.5</span>),</span>
+<span id="cb33-54"><a href="#cb33-54" aria-hidden="true" tabindex="-1"></a>        <span class="at">text =</span> <span class="fu">element_text</span>(<span class="at">size =</span> <span class="dv">18</span>)</span>
+<span id="cb33-55"><a href="#cb33-55" aria-hidden="true" tabindex="-1"></a>        ) <span class="sc">+</span> </span>
+<span id="cb33-56"><a href="#cb33-56" aria-hidden="true" tabindex="-1"></a>  <span class="fu">labs</span>(<span class="at">title =</span> title, </span>
+<span id="cb33-57"><a href="#cb33-57" aria-hidden="true" tabindex="-1"></a>       <span class="at">x =</span> <span class="st">"Podoplanin"</span>, </span>
+<span id="cb33-58"><a href="#cb33-58" aria-hidden="true" tabindex="-1"></a>       <span class="at">y =</span> <span class="st">"CD44"</span>) </span>
+<span id="cb33-59"><a href="#cb33-59" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb33-60"><a href="#cb33-60" aria-hidden="true" tabindex="-1"></a>    <span class="fu">print</span>(g)</span>
+<span id="cb33-61"><a href="#cb33-61" aria-hidden="true" tabindex="-1"></a><span class="co"># save figure</span></span>
+<span id="cb33-62"><a href="#cb33-62" aria-hidden="true" tabindex="-1"></a><span class="co"># ggsave(g, filename = filename, width = 5, height = 4, units = "in")</span></span>
+<span id="cb33-63"><a href="#cb33-63" aria-hidden="true" tabindex="-1"></a>  }</span>
+<span id="cb33-64"><a href="#cb33-64" aria-hidden="true" tabindex="-1"></a>}</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stderr">
 <pre><code>Warning: Contour data has duplicated x, y coordinates.
 ℹ 1254 duplicated rows have been dropped.</code></pre>
@@ -519,9 +521,12 @@ Period:  3 </code></pre>
 <pre><code>Warning: Removed 67 rows containing non-finite outside the scale range
 (`stat_contour()`).</code></pre>
 </div>
-<div class="cell-output cell-output-stderr">
-<pre><code>Warning: Removed 1548 rows containing missing values or values outside the scale range
-(`geom_rect()`).</code></pre>
+<div class="cell-output-display">
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><img src="EMT_files/figure-html/marginal_viz-1.png" class="img-fluid quarto-figure quarto-figure-center figure-img" width="384"></p>
+</figure>
+</div>
 </div>
 <div class="cell-output cell-output-stderr">
 <pre><code>Warning: Contour data has duplicated x, y coordinates.
@@ -531,9 +536,12 @@ Period:  3 </code></pre>
 <pre><code>Warning: Removed 73 rows containing non-finite outside the scale range
 (`stat_contour()`).</code></pre>
 </div>
-<div class="cell-output cell-output-stderr">
-<pre><code>Warning: Removed 1378 rows containing missing values or values outside the scale range
-(`geom_rect()`).</code></pre>
+<div class="cell-output-display">
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><img src="EMT_files/figure-html/marginal_viz-2.png" class="img-fluid quarto-figure quarto-figure-center figure-img" width="384"></p>
+</figure>
+</div>
 </div>
 <div class="cell-output cell-output-stderr">
 <pre><code>Warning: Contour data has duplicated x, y coordinates.
@@ -543,9 +551,12 @@ Period:  3 </code></pre>
 <pre><code>Warning: Removed 66 rows containing non-finite outside the scale range
 (`stat_contour()`).</code></pre>
 </div>
-<div class="cell-output cell-output-stderr">
-<pre><code>Warning: Removed 1604 rows containing missing values or values outside the scale range
-(`geom_rect()`).</code></pre>
+<div class="cell-output-display">
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><img src="EMT_files/figure-html/marginal_viz-3.png" class="img-fluid quarto-figure quarto-figure-center figure-img" width="384"></p>
+</figure>
+</div>
 </div>
 <div class="cell-output cell-output-stderr">
 <pre><code>Warning: Contour data has duplicated x, y coordinates.
@@ -555,9 +566,12 @@ Period:  3 </code></pre>
 <pre><code>Warning: Removed 71 rows containing non-finite outside the scale range
 (`stat_contour()`).</code></pre>
 </div>
-<div class="cell-output cell-output-stderr">
-<pre><code>Warning: Removed 1446 rows containing missing values or values outside the scale range
-(`geom_rect()`).</code></pre>
+<div class="cell-output-display">
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><img src="EMT_files/figure-html/marginal_viz-4.png" class="img-fluid quarto-figure quarto-figure-center figure-img" width="384"></p>
+</figure>
+</div>
 </div>
 <div class="cell-output cell-output-stderr">
 <pre><code>Warning: Contour data has duplicated x, y coordinates.
@@ -567,9 +581,12 @@ Period:  3 </code></pre>
 <pre><code>Warning: Removed 56 rows containing non-finite outside the scale range
 (`stat_contour()`).</code></pre>
 </div>
-<div class="cell-output cell-output-stderr">
-<pre><code>Warning: Removed 1862 rows containing missing values or values outside the scale range
-(`geom_rect()`).</code></pre>
+<div class="cell-output-display">
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><img src="EMT_files/figure-html/marginal_viz-5.png" class="img-fluid quarto-figure quarto-figure-center figure-img" width="384"></p>
+</figure>
+</div>
 </div>
 <div class="cell-output cell-output-stderr">
 <pre><code>Warning: Contour data has duplicated x, y coordinates.
@@ -579,9 +596,12 @@ Period:  3 </code></pre>
 <pre><code>Warning: Removed 71 rows containing non-finite outside the scale range
 (`stat_contour()`).</code></pre>
 </div>
-<div class="cell-output cell-output-stderr">
-<pre><code>Warning: Removed 1444 rows containing missing values or values outside the scale range
-(`geom_rect()`).</code></pre>
+<div class="cell-output-display">
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><img src="EMT_files/figure-html/marginal_viz-6.png" class="img-fluid quarto-figure quarto-figure-center figure-img" width="384"></p>
+</figure>
+</div>
 </div>
 </div>
 </section>
@@ -589,128 +609,130 @@ Period:  3 </code></pre>
 <h3 class="anchored" data-anchor-id="visualize-distributions-of-em-cells">Visualize distributions of E/M cells</h3>
 <p>Next, we visualize the joint distribution of <code>Podoplanin</code> and <code>CD44</code> for cells exhibiting E/M-phenotype, which we define as cells with <code>ECadherin &gt; 2.170</code> and <code>Vimentin &gt; 2.484</code> .</p>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb52"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb52-1"><a href="#cb52-1" aria-hidden="true" tabindex="-1"></a>d <span class="ot">&lt;-</span> <span class="fu">length</span>(var_names)</span>
-<span id="cb52-2"><a href="#cb52-2" aria-hidden="true" tabindex="-1"></a>plot_conditional_data <span class="ot">&lt;-</span> <span class="fu">list</span>()</span>
-<span id="cb52-3"><a href="#cb52-3" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb52-4"><a href="#cb52-4" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span>(i <span class="cf">in</span> <span class="dv">1</span><span class="sc">:</span><span class="dv">3</span>){</span>
-<span id="cb52-5"><a href="#cb52-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">cat</span>(<span class="st">"Period: "</span>, i, <span class="st">"</span><span class="sc">\n</span><span class="st">"</span>)</span>
-<span id="cb52-6"><a href="#cb52-6" aria-hidden="true" tabindex="-1"></a>  </span>
-<span id="cb52-7"><a href="#cb52-7" aria-hidden="true" tabindex="-1"></a>  <span class="co"># control cells</span></span>
-<span id="cb52-8"><a href="#cb52-8" aria-hidden="true" tabindex="-1"></a>  hist_data_control <span class="ot">&lt;-</span> result[[i]][[<span class="st">"hist_data_control"</span>]]</span>
-<span id="cb52-9"><a href="#cb52-9" aria-hidden="true" tabindex="-1"></a>  hist_control <span class="ot">&lt;-</span> result[[i]][[<span class="st">"hist_control"</span>]]</span>
-<span id="cb52-10"><a href="#cb52-10" aria-hidden="true" tabindex="-1"></a>  </span>
-<span id="cb52-11"><a href="#cb52-11" aria-hidden="true" tabindex="-1"></a>  plot_data_control_conditional <span class="ot">&lt;-</span> <span class="fu">plot_histogram_data</span>(hist_data_control,</span>
-<span id="cb52-12"><a href="#cb52-12" aria-hidden="true" tabindex="-1"></a>                                                       hist_control, d, </span>
-<span id="cb52-13"><a href="#cb52-13" aria-hidden="true" tabindex="-1"></a>                                <span class="at">lower_constraint =</span> <span class="fu">c</span>(<span class="fl">2.170</span>, <span class="fl">2.484</span>, <span class="fl">0.5</span>, <span class="fl">0.5</span>, <span class="fl">0.5</span>), </span>
-<span id="cb52-14"><a href="#cb52-14" aria-hidden="true" tabindex="-1"></a>                                <span class="at">upper_constraint =</span> <span class="fu">c</span>(<span class="dv">5</span>, <span class="dv">5</span>, <span class="dv">5</span>, <span class="dv">5</span>, <span class="dv">5</span>), </span>
-<span id="cb52-15"><a href="#cb52-15" aria-hidden="true" tabindex="-1"></a>                                <span class="at">plot_coord =</span> <span class="fu">c</span>(<span class="dv">3</span>, <span class="dv">4</span>), </span>
-<span id="cb52-16"><a href="#cb52-16" aria-hidden="true" tabindex="-1"></a>                                <span class="at">nint =</span> <span class="dv">50</span>, </span>
-<span id="cb52-17"><a href="#cb52-17" aria-hidden="true" tabindex="-1"></a>                                <span class="at">plot_true_density =</span> <span class="cn">FALSE</span>)</span>
-<span id="cb52-18"><a href="#cb52-18" aria-hidden="true" tabindex="-1"></a>  </span>
-<span id="cb52-19"><a href="#cb52-19" aria-hidden="true" tabindex="-1"></a>  hist_data_control_conditional <span class="ot">&lt;-</span> dplyr<span class="sc">::</span><span class="fu">filter</span>(hist_data_control,</span>
-<span id="cb52-20"><a href="#cb52-20" aria-hidden="true" tabindex="-1"></a>                                                 ECadherin <span class="sc">&gt;</span> <span class="fl">2.170</span>, Vimentin <span class="sc">&gt;</span> <span class="fl">2.484</span>)</span>
-<span id="cb52-21"><a href="#cb52-21" aria-hidden="true" tabindex="-1"></a>    </span>
-<span id="cb52-22"><a href="#cb52-22" aria-hidden="true" tabindex="-1"></a>  <span class="co"># marginal distribution using kernel density estimate </span></span>
-<span id="cb52-23"><a href="#cb52-23" aria-hidden="true" tabindex="-1"></a>  kernel_control_conditional <span class="ot">&lt;-</span> <span class="fu">kde2d</span>(<span class="at">x =</span> hist_data_control_conditional[,<span class="dv">3</span>],</span>
-<span id="cb52-24"><a href="#cb52-24" aria-hidden="true" tabindex="-1"></a>                                      <span class="at">y =</span> hist_data_control_conditional[,<span class="dv">4</span>],</span>
-<span id="cb52-25"><a href="#cb52-25" aria-hidden="true" tabindex="-1"></a>                                      <span class="at">n =</span> <span class="dv">50</span>)</span>
-<span id="cb52-26"><a href="#cb52-26" aria-hidden="true" tabindex="-1"></a>  </span>
-<span id="cb52-27"><a href="#cb52-27" aria-hidden="true" tabindex="-1"></a>  <span class="co"># treated cells </span></span>
-<span id="cb52-28"><a href="#cb52-28" aria-hidden="true" tabindex="-1"></a>  hist_data_treated<span class="ot">&lt;-</span> result[[i]][[<span class="st">"hist_data_treated"</span>]]</span>
-<span id="cb52-29"><a href="#cb52-29" aria-hidden="true" tabindex="-1"></a>  hist_treated <span class="ot">&lt;-</span> result[[i]][[<span class="st">"hist_treated"</span>]]</span>
-<span id="cb52-30"><a href="#cb52-30" aria-hidden="true" tabindex="-1"></a>  </span>
-<span id="cb52-31"><a href="#cb52-31" aria-hidden="true" tabindex="-1"></a>  plot_data_treated_conditional <span class="ot">&lt;-</span> <span class="fu">plot_histogram_data</span>(hist_data_treated,</span>
-<span id="cb52-32"><a href="#cb52-32" aria-hidden="true" tabindex="-1"></a>                                                       hist_treated, d, </span>
-<span id="cb52-33"><a href="#cb52-33" aria-hidden="true" tabindex="-1"></a>                                <span class="at">lower_constraint =</span> <span class="fu">c</span>(<span class="fl">2.170</span>, <span class="fl">2.484</span>, <span class="fl">0.5</span>, <span class="fl">0.5</span>, <span class="fl">0.5</span>), </span>
-<span id="cb52-34"><a href="#cb52-34" aria-hidden="true" tabindex="-1"></a>                                <span class="at">upper_constraint =</span> <span class="fu">c</span>(<span class="dv">5</span>, <span class="dv">5</span>, <span class="dv">5</span>, <span class="dv">5</span>, <span class="dv">5</span>), </span>
-<span id="cb52-35"><a href="#cb52-35" aria-hidden="true" tabindex="-1"></a>                                <span class="at">plot_coord =</span> <span class="fu">c</span>(<span class="dv">3</span>, <span class="dv">4</span>), </span>
-<span id="cb52-36"><a href="#cb52-36" aria-hidden="true" tabindex="-1"></a>                                <span class="at">nint =</span> <span class="dv">50</span>, </span>
-<span id="cb52-37"><a href="#cb52-37" aria-hidden="true" tabindex="-1"></a>                                <span class="at">plot_true_density =</span> <span class="cn">FALSE</span>)</span>
-<span id="cb52-38"><a href="#cb52-38" aria-hidden="true" tabindex="-1"></a>  </span>
-<span id="cb52-39"><a href="#cb52-39" aria-hidden="true" tabindex="-1"></a>  hist_data_treated_conditional <span class="ot">&lt;-</span> dplyr<span class="sc">::</span><span class="fu">filter</span>(hist_data_treated,</span>
-<span id="cb52-40"><a href="#cb52-40" aria-hidden="true" tabindex="-1"></a>                                                 ECadherin <span class="sc">&gt;</span> <span class="fl">2.170</span>, Vimentin <span class="sc">&gt;</span> <span class="fl">2.484</span>)</span>
-<span id="cb52-41"><a href="#cb52-41" aria-hidden="true" tabindex="-1"></a>    </span>
-<span id="cb52-42"><a href="#cb52-42" aria-hidden="true" tabindex="-1"></a>  <span class="co"># marginal distribution using kernel density estimate </span></span>
-<span id="cb52-43"><a href="#cb52-43" aria-hidden="true" tabindex="-1"></a>  kernel_treated_conditional <span class="ot">&lt;-</span> <span class="fu">kde2d</span>(<span class="at">x =</span> hist_data_treated_conditional[,<span class="dv">3</span>],</span>
-<span id="cb52-44"><a href="#cb52-44" aria-hidden="true" tabindex="-1"></a>                                      <span class="at">y =</span> hist_data_treated_conditional[,<span class="dv">4</span>],</span>
-<span id="cb52-45"><a href="#cb52-45" aria-hidden="true" tabindex="-1"></a>                                      <span class="at">n =</span> <span class="dv">50</span>)</span>
-<span id="cb52-46"><a href="#cb52-46" aria-hidden="true" tabindex="-1"></a>  </span>
-<span id="cb52-47"><a href="#cb52-47" aria-hidden="true" tabindex="-1"></a>  plot_conditional_data[[i]] <span class="ot">&lt;-</span> <span class="fu">list</span>(</span>
-<span id="cb52-48"><a href="#cb52-48" aria-hidden="true" tabindex="-1"></a>    <span class="at">plot_data_control_conditional =</span> plot_data_control_conditional,</span>
-<span id="cb52-49"><a href="#cb52-49" aria-hidden="true" tabindex="-1"></a>    <span class="at">kernel_control_conditional =</span> kernel_control_conditional,</span>
-<span id="cb52-50"><a href="#cb52-50" aria-hidden="true" tabindex="-1"></a>    <span class="at">plot_data_treated_conditional =</span> plot_data_treated_conditional,</span>
-<span id="cb52-51"><a href="#cb52-51" aria-hidden="true" tabindex="-1"></a>    <span class="at">kernel_treated_conditional =</span> kernel_treated_conditional</span>
-<span id="cb52-52"><a href="#cb52-52" aria-hidden="true" tabindex="-1"></a>  )</span>
-<span id="cb52-53"><a href="#cb52-53" aria-hidden="true" tabindex="-1"></a>}</span>
-<span id="cb52-54"><a href="#cb52-54" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb52-55"><a href="#cb52-55" aria-hidden="true" tabindex="-1"></a><span class="co"># save.image(file = paste0(dir_work, "V2/EMT_5d.RData"))</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb46"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb46-1"><a href="#cb46-1" aria-hidden="true" tabindex="-1"></a>d <span class="ot">&lt;-</span> <span class="fu">length</span>(var_names)</span>
+<span id="cb46-2"><a href="#cb46-2" aria-hidden="true" tabindex="-1"></a>plot_conditional_data <span class="ot">&lt;-</span> <span class="fu">list</span>()</span>
+<span id="cb46-3"><a href="#cb46-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb46-4"><a href="#cb46-4" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span>(i <span class="cf">in</span> <span class="dv">1</span><span class="sc">:</span><span class="dv">3</span>){</span>
+<span id="cb46-5"><a href="#cb46-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">cat</span>(<span class="st">"Period: "</span>, i, <span class="st">"</span><span class="sc">\n</span><span class="st">"</span>)</span>
+<span id="cb46-6"><a href="#cb46-6" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb46-7"><a href="#cb46-7" aria-hidden="true" tabindex="-1"></a>  <span class="co"># control cells</span></span>
+<span id="cb46-8"><a href="#cb46-8" aria-hidden="true" tabindex="-1"></a>  hist_data_control <span class="ot">&lt;-</span> result[[i]][[<span class="st">"hist_data_control"</span>]]</span>
+<span id="cb46-9"><a href="#cb46-9" aria-hidden="true" tabindex="-1"></a>  hist_control <span class="ot">&lt;-</span> result[[i]][[<span class="st">"hist_control"</span>]]</span>
+<span id="cb46-10"><a href="#cb46-10" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb46-11"><a href="#cb46-11" aria-hidden="true" tabindex="-1"></a>  plot_data_control_conditional <span class="ot">&lt;-</span> <span class="fu">plot_histogram_data</span>(hist_data_control,</span>
+<span id="cb46-12"><a href="#cb46-12" aria-hidden="true" tabindex="-1"></a>                                                       hist_control, d, </span>
+<span id="cb46-13"><a href="#cb46-13" aria-hidden="true" tabindex="-1"></a>                                <span class="at">lower_constraint =</span> <span class="fu">c</span>(<span class="fl">2.170</span>, <span class="fl">2.484</span>, <span class="fl">0.5</span>, <span class="fl">0.5</span>, <span class="fl">0.5</span>), </span>
+<span id="cb46-14"><a href="#cb46-14" aria-hidden="true" tabindex="-1"></a>                                <span class="at">upper_constraint =</span> <span class="fu">c</span>(<span class="dv">5</span>, <span class="dv">5</span>, <span class="dv">5</span>, <span class="dv">5</span>, <span class="dv">5</span>), </span>
+<span id="cb46-15"><a href="#cb46-15" aria-hidden="true" tabindex="-1"></a>                                <span class="at">plot_coord =</span> <span class="fu">c</span>(<span class="dv">3</span>, <span class="dv">4</span>), </span>
+<span id="cb46-16"><a href="#cb46-16" aria-hidden="true" tabindex="-1"></a>                                <span class="at">nint =</span> <span class="dv">50</span>, </span>
+<span id="cb46-17"><a href="#cb46-17" aria-hidden="true" tabindex="-1"></a>                                <span class="at">plot_true_density =</span> <span class="cn">FALSE</span>)</span>
+<span id="cb46-18"><a href="#cb46-18" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb46-19"><a href="#cb46-19" aria-hidden="true" tabindex="-1"></a>  hist_data_control_conditional <span class="ot">&lt;-</span> dplyr<span class="sc">::</span><span class="fu">filter</span>(hist_data_control,</span>
+<span id="cb46-20"><a href="#cb46-20" aria-hidden="true" tabindex="-1"></a>                                                 ECadherin <span class="sc">&gt;</span> <span class="fl">2.170</span>, Vimentin <span class="sc">&gt;</span> <span class="fl">2.484</span>)</span>
+<span id="cb46-21"><a href="#cb46-21" aria-hidden="true" tabindex="-1"></a>    </span>
+<span id="cb46-22"><a href="#cb46-22" aria-hidden="true" tabindex="-1"></a>  <span class="co"># marginal distribution using kernel density estimate </span></span>
+<span id="cb46-23"><a href="#cb46-23" aria-hidden="true" tabindex="-1"></a>  kernel_control_conditional <span class="ot">&lt;-</span> <span class="fu">kde2d</span>(<span class="at">x =</span> hist_data_control_conditional[,<span class="dv">3</span>],</span>
+<span id="cb46-24"><a href="#cb46-24" aria-hidden="true" tabindex="-1"></a>                                      <span class="at">y =</span> hist_data_control_conditional[,<span class="dv">4</span>],</span>
+<span id="cb46-25"><a href="#cb46-25" aria-hidden="true" tabindex="-1"></a>                                      <span class="at">n =</span> <span class="dv">50</span>)</span>
+<span id="cb46-26"><a href="#cb46-26" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb46-27"><a href="#cb46-27" aria-hidden="true" tabindex="-1"></a>  <span class="co"># treated cells </span></span>
+<span id="cb46-28"><a href="#cb46-28" aria-hidden="true" tabindex="-1"></a>  hist_data_treated<span class="ot">&lt;-</span> result[[i]][[<span class="st">"hist_data_treated"</span>]]</span>
+<span id="cb46-29"><a href="#cb46-29" aria-hidden="true" tabindex="-1"></a>  hist_treated <span class="ot">&lt;-</span> result[[i]][[<span class="st">"hist_treated"</span>]]</span>
+<span id="cb46-30"><a href="#cb46-30" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb46-31"><a href="#cb46-31" aria-hidden="true" tabindex="-1"></a>  plot_data_treated_conditional <span class="ot">&lt;-</span> <span class="fu">plot_histogram_data</span>(hist_data_treated,</span>
+<span id="cb46-32"><a href="#cb46-32" aria-hidden="true" tabindex="-1"></a>                                                       hist_treated, d, </span>
+<span id="cb46-33"><a href="#cb46-33" aria-hidden="true" tabindex="-1"></a>                                <span class="at">lower_constraint =</span> <span class="fu">c</span>(<span class="fl">2.170</span>, <span class="fl">2.484</span>, <span class="fl">0.5</span>, <span class="fl">0.5</span>, <span class="fl">0.5</span>), </span>
+<span id="cb46-34"><a href="#cb46-34" aria-hidden="true" tabindex="-1"></a>                                <span class="at">upper_constraint =</span> <span class="fu">c</span>(<span class="dv">5</span>, <span class="dv">5</span>, <span class="dv">5</span>, <span class="dv">5</span>, <span class="dv">5</span>), </span>
+<span id="cb46-35"><a href="#cb46-35" aria-hidden="true" tabindex="-1"></a>                                <span class="at">plot_coord =</span> <span class="fu">c</span>(<span class="dv">3</span>, <span class="dv">4</span>), </span>
+<span id="cb46-36"><a href="#cb46-36" aria-hidden="true" tabindex="-1"></a>                                <span class="at">nint =</span> <span class="dv">50</span>, </span>
+<span id="cb46-37"><a href="#cb46-37" aria-hidden="true" tabindex="-1"></a>                                <span class="at">plot_true_density =</span> <span class="cn">FALSE</span>)</span>
+<span id="cb46-38"><a href="#cb46-38" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb46-39"><a href="#cb46-39" aria-hidden="true" tabindex="-1"></a>  hist_data_treated_conditional <span class="ot">&lt;-</span> dplyr<span class="sc">::</span><span class="fu">filter</span>(hist_data_treated,</span>
+<span id="cb46-40"><a href="#cb46-40" aria-hidden="true" tabindex="-1"></a>                                                 ECadherin <span class="sc">&gt;</span> <span class="fl">2.170</span>, Vimentin <span class="sc">&gt;</span> <span class="fl">2.484</span>)</span>
+<span id="cb46-41"><a href="#cb46-41" aria-hidden="true" tabindex="-1"></a>    </span>
+<span id="cb46-42"><a href="#cb46-42" aria-hidden="true" tabindex="-1"></a>  <span class="co"># marginal distribution using kernel density estimate </span></span>
+<span id="cb46-43"><a href="#cb46-43" aria-hidden="true" tabindex="-1"></a>  kernel_treated_conditional <span class="ot">&lt;-</span> <span class="fu">kde2d</span>(<span class="at">x =</span> hist_data_treated_conditional[,<span class="dv">3</span>],</span>
+<span id="cb46-44"><a href="#cb46-44" aria-hidden="true" tabindex="-1"></a>                                      <span class="at">y =</span> hist_data_treated_conditional[,<span class="dv">4</span>],</span>
+<span id="cb46-45"><a href="#cb46-45" aria-hidden="true" tabindex="-1"></a>                                      <span class="at">n =</span> <span class="dv">50</span>)</span>
+<span id="cb46-46"><a href="#cb46-46" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb46-47"><a href="#cb46-47" aria-hidden="true" tabindex="-1"></a>  plot_conditional_data[[i]] <span class="ot">&lt;-</span> <span class="fu">list</span>(</span>
+<span id="cb46-48"><a href="#cb46-48" aria-hidden="true" tabindex="-1"></a>    <span class="at">plot_data_control_conditional =</span> plot_data_control_conditional,</span>
+<span id="cb46-49"><a href="#cb46-49" aria-hidden="true" tabindex="-1"></a>    <span class="at">kernel_control_conditional =</span> kernel_control_conditional,</span>
+<span id="cb46-50"><a href="#cb46-50" aria-hidden="true" tabindex="-1"></a>    <span class="at">plot_data_treated_conditional =</span> plot_data_treated_conditional,</span>
+<span id="cb46-51"><a href="#cb46-51" aria-hidden="true" tabindex="-1"></a>    <span class="at">kernel_treated_conditional =</span> kernel_treated_conditional</span>
+<span id="cb46-52"><a href="#cb46-52" aria-hidden="true" tabindex="-1"></a>  )</span>
+<span id="cb46-53"><a href="#cb46-53" aria-hidden="true" tabindex="-1"></a>}</span>
+<span id="cb46-54"><a href="#cb46-54" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb46-55"><a href="#cb46-55" aria-hidden="true" tabindex="-1"></a><span class="co"># save.image(file = paste0(dir_work, "V2/EMT_5d.RData"))</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
-<div class="cell">
-<div class="sourceCode cell-code" id="cb53"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb53-1"><a href="#cb53-1" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span>(i <span class="cf">in</span> <span class="dv">1</span><span class="sc">:</span><span class="dv">3</span>){</span>
-<span id="cb53-2"><a href="#cb53-2" aria-hidden="true" tabindex="-1"></a>  <span class="cf">for</span>(type <span class="cf">in</span> <span class="fu">c</span>(<span class="st">"treated"</span>, <span class="st">"control"</span>)){</span>
-<span id="cb53-3"><a href="#cb53-3" aria-hidden="true" tabindex="-1"></a>    </span>
-<span id="cb53-4"><a href="#cb53-4" aria-hidden="true" tabindex="-1"></a>    plot_data <span class="ot">&lt;-</span> plot_conditional_data[[i]][[<span class="fu">paste0</span>(<span class="st">"plot_data_"</span>, type, <span class="st">"_conditional"</span>)]]</span>
-<span id="cb53-5"><a href="#cb53-5" aria-hidden="true" tabindex="-1"></a>    kernel_est <span class="ot">&lt;-</span> plot_conditional_data[[i]][[<span class="fu">paste0</span>(<span class="st">"kernel_"</span>, type, <span class="st">"_conditional"</span>)]]</span>
-<span id="cb53-6"><a href="#cb53-6" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb53-7"><a href="#cb53-7" aria-hidden="true" tabindex="-1"></a>    grid <span class="ot">&lt;-</span> <span class="fu">expand.grid</span>( kernel_est<span class="sc">$</span>x, kernel_est<span class="sc">$</span>y)</span>
-<span id="cb53-8"><a href="#cb53-8" aria-hidden="true" tabindex="-1"></a>    grid_val <span class="ot">&lt;-</span> <span class="fu">tibble</span>(</span>
-<span id="cb53-9"><a href="#cb53-9" aria-hidden="true" tabindex="-1"></a>      <span class="at">x =</span> grid[,<span class="dv">1</span>],</span>
-<span id="cb53-10"><a href="#cb53-10" aria-hidden="true" tabindex="-1"></a>      <span class="at">y =</span> grid[,<span class="dv">2</span>],</span>
-<span id="cb53-11"><a href="#cb53-11" aria-hidden="true" tabindex="-1"></a>      <span class="at">z =</span> <span class="fu">as.vector</span>(kernel_est<span class="sc">$</span>z)</span>
-<span id="cb53-12"><a href="#cb53-12" aria-hidden="true" tabindex="-1"></a>    )  <span class="sc">%&gt;%</span> </span>
-<span id="cb53-13"><a href="#cb53-13" aria-hidden="true" tabindex="-1"></a>      dplyr<span class="sc">::</span><span class="fu">filter</span>(x <span class="sc">&gt;</span> <span class="fl">0.5</span>, y <span class="sc">&gt;</span> <span class="fl">0.5</span>)</span>
-<span id="cb53-14"><a href="#cb53-14" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb53-15"><a href="#cb53-15" aria-hidden="true" tabindex="-1"></a>    <span class="cf">if</span>(type <span class="sc">==</span> <span class="st">"treated"</span>){</span>
-<span id="cb53-16"><a href="#cb53-16" aria-hidden="true" tabindex="-1"></a>      title <span class="ot">&lt;-</span> <span class="fu">paste0</span>(<span class="st">"Period "</span>, i, <span class="st">" Treated"</span> )</span>
-<span id="cb53-17"><a href="#cb53-17" aria-hidden="true" tabindex="-1"></a>    }<span class="cf">else</span>{</span>
-<span id="cb53-18"><a href="#cb53-18" aria-hidden="true" tabindex="-1"></a>      title <span class="ot">&lt;-</span> <span class="fu">paste0</span>(<span class="st">"Period "</span>, i, <span class="st">" Control"</span> )</span>
-<span id="cb53-19"><a href="#cb53-19" aria-hidden="true" tabindex="-1"></a>    }</span>
-<span id="cb53-20"><a href="#cb53-20" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb53-21"><a href="#cb53-21" aria-hidden="true" tabindex="-1"></a>    filename <span class="ot">&lt;-</span> <span class="fu">paste0</span>(fig_dir, <span class="st">"Podoplanin_CD44_conditional_"</span>,i, <span class="st">"_"</span>, type, <span class="st">".png"</span>)</span>
-<span id="cb53-22"><a href="#cb53-22" aria-hidden="true" tabindex="-1"></a>    </span>
-<span id="cb53-23"><a href="#cb53-23" aria-hidden="true" tabindex="-1"></a>    grid_lower_x <span class="ot">&lt;-</span>  plot_data<span class="sc">$</span>grid_lower[,plot_data<span class="sc">$</span>plot_coord[<span class="dv">1</span>]]</span>
-<span id="cb53-24"><a href="#cb53-24" aria-hidden="true" tabindex="-1"></a>    grid_upper_x <span class="ot">&lt;-</span> plot_data<span class="sc">$</span>grid_upper[,plot_data<span class="sc">$</span>plot_coord[<span class="dv">1</span>]]</span>
-<span id="cb53-25"><a href="#cb53-25" aria-hidden="true" tabindex="-1"></a>    grid_lower_y <span class="ot">&lt;-</span>  plot_data<span class="sc">$</span>grid_lower[,plot_data<span class="sc">$</span>plot_coord[<span class="dv">2</span>]]</span>
-<span id="cb53-26"><a href="#cb53-26" aria-hidden="true" tabindex="-1"></a>    grid_upper_y <span class="ot">&lt;-</span> plot_data<span class="sc">$</span>grid_upper[,plot_data<span class="sc">$</span>plot_coord[<span class="dv">2</span>]]</span>
-<span id="cb53-27"><a href="#cb53-27" aria-hidden="true" tabindex="-1"></a>    </span>
-<span id="cb53-28"><a href="#cb53-28" aria-hidden="true" tabindex="-1"></a>    grid_volume <span class="ot">&lt;-</span> (grid_upper_y <span class="sc">-</span> grid_lower_y) <span class="sc">*</span> (grid_upper_x <span class="sc">-</span> grid_lower_x)</span>
-<span id="cb53-29"><a href="#cb53-29" aria-hidden="true" tabindex="-1"></a>    grid_density <span class="ot">&lt;-</span> plot_data<span class="sc">$</span>est_prob[,<span class="dv">1</span>] <span class="sc">/</span> <span class="fu">sum</span>(plot_data<span class="sc">$</span>est_prob[,<span class="dv">1</span>]) <span class="sc">/</span> grid_volume</span>
-<span id="cb53-30"><a href="#cb53-30" aria-hidden="true" tabindex="-1"></a>  </span>
-<span id="cb53-31"><a href="#cb53-31" aria-hidden="true" tabindex="-1"></a>    g <span class="ot">&lt;-</span> <span class="fu">ggplot</span>() <span class="sc">+</span> </span>
-<span id="cb53-32"><a href="#cb53-32" aria-hidden="true" tabindex="-1"></a>      <span class="fu">geom_rect</span>(<span class="fu">aes</span>(<span class="at">xmin =</span> grid_lower_x , </span>
-<span id="cb53-33"><a href="#cb53-33" aria-hidden="true" tabindex="-1"></a>                    <span class="at">xmax =</span> grid_upper_x,</span>
-<span id="cb53-34"><a href="#cb53-34" aria-hidden="true" tabindex="-1"></a>                    <span class="at">ymin  =</span> grid_lower_y,</span>
-<span id="cb53-35"><a href="#cb53-35" aria-hidden="true" tabindex="-1"></a>                    <span class="at">ymax =</span> grid_upper_y, </span>
-<span id="cb53-36"><a href="#cb53-36" aria-hidden="true" tabindex="-1"></a>                    <span class="at">fill =</span>  grid_density ) ) <span class="sc">+</span> </span>
-<span id="cb53-37"><a href="#cb53-37" aria-hidden="true" tabindex="-1"></a>      <span class="fu">scale_fill_gradient2</span>(<span class="at">low =</span> <span class="st">"white"</span>, <span class="at">high =</span> <span class="st">"#08306b"</span>,<span class="at">mid =</span> <span class="st">"#6baed6"</span>,</span>
-<span id="cb53-38"><a href="#cb53-38" aria-hidden="true" tabindex="-1"></a>                           <span class="at">midpoint =</span> <span class="fu">quantile</span>(grid_density, <span class="fl">0.99</span>), </span>
-<span id="cb53-39"><a href="#cb53-39" aria-hidden="true" tabindex="-1"></a>                           <span class="at">aesthetics =</span> <span class="st">"fill"</span>,</span>
-<span id="cb53-40"><a href="#cb53-40" aria-hidden="true" tabindex="-1"></a>                           <span class="at">name =</span> <span class="st">"density"</span>) <span class="sc">+</span> </span>
-<span id="cb53-41"><a href="#cb53-41" aria-hidden="true" tabindex="-1"></a>      <span class="fu">geom_contour</span>(<span class="fu">aes</span>(<span class="at">x =</span> x, <span class="at">y =</span> y, </span>
-<span id="cb53-42"><a href="#cb53-42" aria-hidden="true" tabindex="-1"></a>                       <span class="at">z =</span> z), </span>
-<span id="cb53-43"><a href="#cb53-43" aria-hidden="true" tabindex="-1"></a>                   <span class="at">breaks =</span> <span class="fu">quantile</span>(grid_val<span class="sc">$</span>z, <span class="fu">c</span>(<span class="fl">0.75</span>, <span class="fl">0.85</span>, <span class="fl">0.95</span>)),</span>
-<span id="cb53-44"><a href="#cb53-44" aria-hidden="true" tabindex="-1"></a>                   <span class="at">color =</span> <span class="st">"grey30"</span>, <span class="at">data =</span> grid_val) <span class="sc">+</span> </span>
-<span id="cb53-45"><a href="#cb53-45" aria-hidden="true" tabindex="-1"></a>    <span class="fu">scale_x_continuous</span>(<span class="at">expand =</span> <span class="fu">expansion</span>(<span class="dv">0</span>),</span>
-<span id="cb53-46"><a href="#cb53-46" aria-hidden="true" tabindex="-1"></a>                     <span class="at">limits =</span> <span class="fu">c</span>(<span class="fl">1.8</span>, <span class="fl">4.2</span>)</span>
-<span id="cb53-47"><a href="#cb53-47" aria-hidden="true" tabindex="-1"></a>                     ) <span class="sc">+</span> <span class="co"># see https://ggplot2-book.org/scales-position </span></span>
-<span id="cb53-48"><a href="#cb53-48" aria-hidden="true" tabindex="-1"></a>  <span class="fu">scale_y_continuous</span>(<span class="at">expand =</span> <span class="fu">expansion</span>(<span class="dv">0</span>),</span>
-<span id="cb53-49"><a href="#cb53-49" aria-hidden="true" tabindex="-1"></a>                     <span class="at">limits =</span> <span class="fu">c</span>(<span class="fl">0.8</span>, <span class="fl">3.5</span>)</span>
-<span id="cb53-50"><a href="#cb53-50" aria-hidden="true" tabindex="-1"></a>                     ) <span class="sc">+</span></span>
-<span id="cb53-51"><a href="#cb53-51" aria-hidden="true" tabindex="-1"></a>      <span class="fu">theme_classic</span>() <span class="sc">+</span>  </span>
-<span id="cb53-52"><a href="#cb53-52" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme</span>(<span class="at">panel.background =</span> <span class="fu">element_blank</span>(),</span>
-<span id="cb53-53"><a href="#cb53-53" aria-hidden="true" tabindex="-1"></a>            <span class="at">panel.border=</span><span class="fu">element_blank</span>(),</span>
-<span id="cb53-54"><a href="#cb53-54" aria-hidden="true" tabindex="-1"></a>        <span class="at">plot.title =</span> <span class="fu">element_text</span>(<span class="at">hjust =</span> <span class="fl">0.5</span>),</span>
-<span id="cb53-55"><a href="#cb53-55" aria-hidden="true" tabindex="-1"></a>        <span class="at">text =</span> <span class="fu">element_text</span>(<span class="at">size =</span> <span class="dv">18</span>)</span>
-<span id="cb53-56"><a href="#cb53-56" aria-hidden="true" tabindex="-1"></a>        ) <span class="sc">+</span> </span>
-<span id="cb53-57"><a href="#cb53-57" aria-hidden="true" tabindex="-1"></a>  <span class="fu">labs</span>(<span class="at">title =</span> title, </span>
-<span id="cb53-58"><a href="#cb53-58" aria-hidden="true" tabindex="-1"></a>       <span class="at">x =</span> <span class="st">"Podoplanin"</span>, </span>
-<span id="cb53-59"><a href="#cb53-59" aria-hidden="true" tabindex="-1"></a>       <span class="at">y =</span> <span class="st">"CD44"</span>) </span>
-<span id="cb53-60"><a href="#cb53-60" aria-hidden="true" tabindex="-1"></a>  </span>
-<span id="cb53-61"><a href="#cb53-61" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb53-62"><a href="#cb53-62" aria-hidden="true" tabindex="-1"></a><span class="fu">ggsave</span>(g, <span class="at">filename =</span> filename, </span>
-<span id="cb53-63"><a href="#cb53-63" aria-hidden="true" tabindex="-1"></a>         <span class="at">width =</span> <span class="dv">5</span>, <span class="at">height =</span> <span class="dv">4</span>, <span class="at">units =</span> <span class="st">"in"</span>)</span>
-<span id="cb53-64"><a href="#cb53-64" aria-hidden="true" tabindex="-1"></a>  }</span>
-<span id="cb53-65"><a href="#cb53-65" aria-hidden="true" tabindex="-1"></a>}</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell" data-layout-align="center">
+<div class="sourceCode cell-code" id="cb47"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb47-1"><a href="#cb47-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Figure 8 in paper </span></span>
+<span id="cb47-2"><a href="#cb47-2" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span>(i <span class="cf">in</span> <span class="dv">1</span><span class="sc">:</span><span class="dv">3</span>){</span>
+<span id="cb47-3"><a href="#cb47-3" aria-hidden="true" tabindex="-1"></a>  <span class="cf">for</span>(type <span class="cf">in</span> <span class="fu">c</span>(<span class="st">"treated"</span>, <span class="st">"control"</span>)){</span>
+<span id="cb47-4"><a href="#cb47-4" aria-hidden="true" tabindex="-1"></a>    </span>
+<span id="cb47-5"><a href="#cb47-5" aria-hidden="true" tabindex="-1"></a>    plot_data <span class="ot">&lt;-</span> plot_conditional_data[[i]][[<span class="fu">paste0</span>(<span class="st">"plot_data_"</span>, type, <span class="st">"_conditional"</span>)]]</span>
+<span id="cb47-6"><a href="#cb47-6" aria-hidden="true" tabindex="-1"></a>    kernel_est <span class="ot">&lt;-</span> plot_conditional_data[[i]][[<span class="fu">paste0</span>(<span class="st">"kernel_"</span>, type, <span class="st">"_conditional"</span>)]]</span>
+<span id="cb47-7"><a href="#cb47-7" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb47-8"><a href="#cb47-8" aria-hidden="true" tabindex="-1"></a>    grid <span class="ot">&lt;-</span> <span class="fu">expand.grid</span>( kernel_est<span class="sc">$</span>x, kernel_est<span class="sc">$</span>y)</span>
+<span id="cb47-9"><a href="#cb47-9" aria-hidden="true" tabindex="-1"></a>    grid_val <span class="ot">&lt;-</span> <span class="fu">tibble</span>(</span>
+<span id="cb47-10"><a href="#cb47-10" aria-hidden="true" tabindex="-1"></a>      <span class="at">x =</span> grid[,<span class="dv">1</span>],</span>
+<span id="cb47-11"><a href="#cb47-11" aria-hidden="true" tabindex="-1"></a>      <span class="at">y =</span> grid[,<span class="dv">2</span>],</span>
+<span id="cb47-12"><a href="#cb47-12" aria-hidden="true" tabindex="-1"></a>      <span class="at">z =</span> <span class="fu">as.vector</span>(kernel_est<span class="sc">$</span>z)</span>
+<span id="cb47-13"><a href="#cb47-13" aria-hidden="true" tabindex="-1"></a>    )  <span class="sc">%&gt;%</span> </span>
+<span id="cb47-14"><a href="#cb47-14" aria-hidden="true" tabindex="-1"></a>      dplyr<span class="sc">::</span><span class="fu">filter</span>(x <span class="sc">&gt;</span> <span class="fl">0.5</span>, y <span class="sc">&gt;</span> <span class="fl">0.5</span>)</span>
+<span id="cb47-15"><a href="#cb47-15" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb47-16"><a href="#cb47-16" aria-hidden="true" tabindex="-1"></a>    <span class="cf">if</span>(type <span class="sc">==</span> <span class="st">"treated"</span>){</span>
+<span id="cb47-17"><a href="#cb47-17" aria-hidden="true" tabindex="-1"></a>      title <span class="ot">&lt;-</span> <span class="fu">paste0</span>(<span class="st">"Period "</span>, i, <span class="st">" Treated - E/M cells"</span> )</span>
+<span id="cb47-18"><a href="#cb47-18" aria-hidden="true" tabindex="-1"></a>    }<span class="cf">else</span>{</span>
+<span id="cb47-19"><a href="#cb47-19" aria-hidden="true" tabindex="-1"></a>      title <span class="ot">&lt;-</span> <span class="fu">paste0</span>(<span class="st">"Period "</span>, i, <span class="st">" Control - E/M cells"</span> )</span>
+<span id="cb47-20"><a href="#cb47-20" aria-hidden="true" tabindex="-1"></a>    }</span>
+<span id="cb47-21"><a href="#cb47-21" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb47-22"><a href="#cb47-22" aria-hidden="true" tabindex="-1"></a>    filename <span class="ot">&lt;-</span> <span class="fu">paste0</span>(fig_dir, <span class="st">"Podoplanin_CD44_conditional_"</span>,i, <span class="st">"_"</span>, type, <span class="st">".png"</span>)</span>
+<span id="cb47-23"><a href="#cb47-23" aria-hidden="true" tabindex="-1"></a>    </span>
+<span id="cb47-24"><a href="#cb47-24" aria-hidden="true" tabindex="-1"></a>    grid_lower_x <span class="ot">&lt;-</span>  plot_data<span class="sc">$</span>grid_lower[,plot_data<span class="sc">$</span>plot_coord[<span class="dv">1</span>]]</span>
+<span id="cb47-25"><a href="#cb47-25" aria-hidden="true" tabindex="-1"></a>    grid_upper_x <span class="ot">&lt;-</span> plot_data<span class="sc">$</span>grid_upper[,plot_data<span class="sc">$</span>plot_coord[<span class="dv">1</span>]]</span>
+<span id="cb47-26"><a href="#cb47-26" aria-hidden="true" tabindex="-1"></a>    grid_lower_y <span class="ot">&lt;-</span>  plot_data<span class="sc">$</span>grid_lower[,plot_data<span class="sc">$</span>plot_coord[<span class="dv">2</span>]]</span>
+<span id="cb47-27"><a href="#cb47-27" aria-hidden="true" tabindex="-1"></a>    grid_upper_y <span class="ot">&lt;-</span> plot_data<span class="sc">$</span>grid_upper[,plot_data<span class="sc">$</span>plot_coord[<span class="dv">2</span>]]</span>
+<span id="cb47-28"><a href="#cb47-28" aria-hidden="true" tabindex="-1"></a>    </span>
+<span id="cb47-29"><a href="#cb47-29" aria-hidden="true" tabindex="-1"></a>    grid_volume <span class="ot">&lt;-</span> (grid_upper_y <span class="sc">-</span> grid_lower_y) <span class="sc">*</span> (grid_upper_x <span class="sc">-</span> grid_lower_x)</span>
+<span id="cb47-30"><a href="#cb47-30" aria-hidden="true" tabindex="-1"></a>    grid_density <span class="ot">&lt;-</span> plot_data<span class="sc">$</span>est_prob[,<span class="dv">1</span>] <span class="sc">/</span> <span class="fu">sum</span>(plot_data<span class="sc">$</span>est_prob[,<span class="dv">1</span>]) <span class="sc">/</span> grid_volume</span>
+<span id="cb47-31"><a href="#cb47-31" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb47-32"><a href="#cb47-32" aria-hidden="true" tabindex="-1"></a>    g <span class="ot">&lt;-</span> <span class="fu">ggplot</span>() <span class="sc">+</span> </span>
+<span id="cb47-33"><a href="#cb47-33" aria-hidden="true" tabindex="-1"></a>      <span class="fu">geom_rect</span>(<span class="fu">aes</span>(<span class="at">xmin =</span> grid_lower_x , </span>
+<span id="cb47-34"><a href="#cb47-34" aria-hidden="true" tabindex="-1"></a>                    <span class="at">xmax =</span> grid_upper_x,</span>
+<span id="cb47-35"><a href="#cb47-35" aria-hidden="true" tabindex="-1"></a>                    <span class="at">ymin  =</span> grid_lower_y,</span>
+<span id="cb47-36"><a href="#cb47-36" aria-hidden="true" tabindex="-1"></a>                    <span class="at">ymax =</span> grid_upper_y, </span>
+<span id="cb47-37"><a href="#cb47-37" aria-hidden="true" tabindex="-1"></a>                    <span class="at">fill =</span>  grid_density ) ) <span class="sc">+</span> </span>
+<span id="cb47-38"><a href="#cb47-38" aria-hidden="true" tabindex="-1"></a>      <span class="fu">scale_fill_gradient2</span>(<span class="at">low =</span> <span class="st">"white"</span>, <span class="at">high =</span> <span class="st">"#08306b"</span>,<span class="at">mid =</span> <span class="st">"#6baed6"</span>,</span>
+<span id="cb47-39"><a href="#cb47-39" aria-hidden="true" tabindex="-1"></a>                           <span class="at">midpoint =</span> <span class="fu">quantile</span>(grid_density, <span class="fl">0.99</span>), </span>
+<span id="cb47-40"><a href="#cb47-40" aria-hidden="true" tabindex="-1"></a>                           <span class="at">aesthetics =</span> <span class="st">"fill"</span>,</span>
+<span id="cb47-41"><a href="#cb47-41" aria-hidden="true" tabindex="-1"></a>                           <span class="at">name =</span> <span class="st">"density"</span>) <span class="sc">+</span> </span>
+<span id="cb47-42"><a href="#cb47-42" aria-hidden="true" tabindex="-1"></a>      <span class="fu">geom_contour</span>(<span class="fu">aes</span>(<span class="at">x =</span> x, <span class="at">y =</span> y, </span>
+<span id="cb47-43"><a href="#cb47-43" aria-hidden="true" tabindex="-1"></a>                       <span class="at">z =</span> z), </span>
+<span id="cb47-44"><a href="#cb47-44" aria-hidden="true" tabindex="-1"></a>                   <span class="at">breaks =</span> <span class="fu">quantile</span>(grid_val<span class="sc">$</span>z, <span class="fu">c</span>(<span class="fl">0.75</span>, <span class="fl">0.85</span>, <span class="fl">0.95</span>)),</span>
+<span id="cb47-45"><a href="#cb47-45" aria-hidden="true" tabindex="-1"></a>                   <span class="at">color =</span> <span class="st">"grey30"</span>, <span class="at">data =</span> grid_val) <span class="sc">+</span> </span>
+<span id="cb47-46"><a href="#cb47-46" aria-hidden="true" tabindex="-1"></a>    <span class="fu">scale_x_continuous</span>(<span class="at">expand =</span> <span class="fu">expansion</span>(<span class="dv">0</span>),</span>
+<span id="cb47-47"><a href="#cb47-47" aria-hidden="true" tabindex="-1"></a>                     <span class="at">limits =</span> <span class="fu">c</span>(<span class="fl">1.8</span>, <span class="fl">4.2</span>)</span>
+<span id="cb47-48"><a href="#cb47-48" aria-hidden="true" tabindex="-1"></a>                     ) <span class="sc">+</span> <span class="co"># see https://ggplot2-book.org/scales-position </span></span>
+<span id="cb47-49"><a href="#cb47-49" aria-hidden="true" tabindex="-1"></a>  <span class="fu">scale_y_continuous</span>(<span class="at">expand =</span> <span class="fu">expansion</span>(<span class="dv">0</span>),</span>
+<span id="cb47-50"><a href="#cb47-50" aria-hidden="true" tabindex="-1"></a>                     <span class="at">limits =</span> <span class="fu">c</span>(<span class="fl">0.8</span>, <span class="fl">3.5</span>)</span>
+<span id="cb47-51"><a href="#cb47-51" aria-hidden="true" tabindex="-1"></a>                     ) <span class="sc">+</span></span>
+<span id="cb47-52"><a href="#cb47-52" aria-hidden="true" tabindex="-1"></a>      <span class="fu">theme_classic</span>() <span class="sc">+</span>  </span>
+<span id="cb47-53"><a href="#cb47-53" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme</span>(<span class="at">panel.background =</span> <span class="fu">element_blank</span>(),</span>
+<span id="cb47-54"><a href="#cb47-54" aria-hidden="true" tabindex="-1"></a>            <span class="at">panel.border=</span><span class="fu">element_blank</span>(),</span>
+<span id="cb47-55"><a href="#cb47-55" aria-hidden="true" tabindex="-1"></a>        <span class="at">plot.title =</span> <span class="fu">element_text</span>(<span class="at">hjust =</span> <span class="fl">0.5</span>),</span>
+<span id="cb47-56"><a href="#cb47-56" aria-hidden="true" tabindex="-1"></a>        <span class="at">text =</span> <span class="fu">element_text</span>(<span class="at">size =</span> <span class="dv">18</span>)</span>
+<span id="cb47-57"><a href="#cb47-57" aria-hidden="true" tabindex="-1"></a>        ) <span class="sc">+</span> </span>
+<span id="cb47-58"><a href="#cb47-58" aria-hidden="true" tabindex="-1"></a>  <span class="fu">labs</span>(<span class="at">title =</span> title, </span>
+<span id="cb47-59"><a href="#cb47-59" aria-hidden="true" tabindex="-1"></a>       <span class="at">x =</span> <span class="st">"Podoplanin"</span>, </span>
+<span id="cb47-60"><a href="#cb47-60" aria-hidden="true" tabindex="-1"></a>       <span class="at">y =</span> <span class="st">"CD44"</span>) </span>
+<span id="cb47-61"><a href="#cb47-61" aria-hidden="true" tabindex="-1"></a>    </span>
+<span id="cb47-62"><a href="#cb47-62" aria-hidden="true" tabindex="-1"></a>    <span class="fu">print</span>(g)</span>
+<span id="cb47-63"><a href="#cb47-63" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb47-64"><a href="#cb47-64" aria-hidden="true" tabindex="-1"></a><span class="co"># save figure</span></span>
+<span id="cb47-65"><a href="#cb47-65" aria-hidden="true" tabindex="-1"></a><span class="co"># ggsave(g, filename = filename, width = 5, height = 4, units = "in")</span></span>
+<span id="cb47-66"><a href="#cb47-66" aria-hidden="true" tabindex="-1"></a>  }</span>
+<span id="cb47-67"><a href="#cb47-67" aria-hidden="true" tabindex="-1"></a>}</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stderr">
 <pre><code>Warning: Contour data has duplicated x, y coordinates.
 ℹ 920 duplicated rows have been dropped.</code></pre>
@@ -719,9 +741,12 @@ Period:  3 </code></pre>
 <pre><code>Warning: Removed 78 rows containing non-finite outside the scale range
 (`stat_contour()`).</code></pre>
 </div>
-<div class="cell-output cell-output-stderr">
-<pre><code>Warning: Removed 1324 rows containing missing values or values outside the scale range
-(`geom_rect()`).</code></pre>
+<div class="cell-output-display">
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><img src="EMT_files/figure-html/plot_conditional_density-1.png" class="img-fluid quarto-figure quarto-figure-center figure-img" width="384"></p>
+</figure>
+</div>
 </div>
 <div class="cell-output cell-output-stderr">
 <pre><code>Warning: Contour data has duplicated x, y coordinates.
@@ -731,9 +756,12 @@ Period:  3 </code></pre>
 <pre><code>Warning: Removed 76 rows containing non-finite outside the scale range
 (`stat_contour()`).</code></pre>
 </div>
-<div class="cell-output cell-output-stderr">
-<pre><code>Warning: Removed 1198 rows containing missing values or values outside the scale range
-(`geom_rect()`).</code></pre>
+<div class="cell-output-display">
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><img src="EMT_files/figure-html/plot_conditional_density-2.png" class="img-fluid quarto-figure quarto-figure-center figure-img" width="384"></p>
+</figure>
+</div>
 </div>
 <div class="cell-output cell-output-stderr">
 <pre><code>Warning: Contour data has duplicated x, y coordinates.
@@ -743,9 +771,12 @@ Period:  3 </code></pre>
 <pre><code>Warning: Removed 74 rows containing non-finite outside the scale range
 (`stat_contour()`).</code></pre>
 </div>
-<div class="cell-output cell-output-stderr">
-<pre><code>Warning: Removed 1460 rows containing missing values or values outside the scale range
-(`geom_rect()`).</code></pre>
+<div class="cell-output-display">
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><img src="EMT_files/figure-html/plot_conditional_density-3.png" class="img-fluid quarto-figure quarto-figure-center figure-img" width="384"></p>
+</figure>
+</div>
 </div>
 <div class="cell-output cell-output-stderr">
 <pre><code>Warning: Contour data has duplicated x, y coordinates.
@@ -755,9 +786,12 @@ Period:  3 </code></pre>
 <pre><code>Warning: Removed 80 rows containing non-finite outside the scale range
 (`stat_contour()`).</code></pre>
 </div>
-<div class="cell-output cell-output-stderr">
-<pre><code>Warning: Removed 1240 rows containing missing values or values outside the scale range
-(`geom_rect()`).</code></pre>
+<div class="cell-output-display">
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><img src="EMT_files/figure-html/plot_conditional_density-4.png" class="img-fluid quarto-figure quarto-figure-center figure-img" width="384"></p>
+</figure>
+</div>
 </div>
 <div class="cell-output cell-output-stderr">
 <pre><code>Warning: Contour data has duplicated x, y coordinates.
@@ -767,9 +801,12 @@ Period:  3 </code></pre>
 <pre><code>Warning: Removed 73 rows containing non-finite outside the scale range
 (`stat_contour()`).</code></pre>
 </div>
-<div class="cell-output cell-output-stderr">
-<pre><code>Warning: Removed 1716 rows containing missing values or values outside the scale range
-(`geom_rect()`).</code></pre>
+<div class="cell-output-display">
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><img src="EMT_files/figure-html/plot_conditional_density-5.png" class="img-fluid quarto-figure quarto-figure-center figure-img" width="384"></p>
+</figure>
+</div>
 </div>
 <div class="cell-output cell-output-stderr">
 <pre><code>Warning: Contour data has duplicated x, y coordinates.
@@ -779,9 +816,12 @@ Period:  3 </code></pre>
 <pre><code>Warning: Removed 82 rows containing non-finite outside the scale range
 (`stat_contour()`).</code></pre>
 </div>
-<div class="cell-output cell-output-stderr">
-<pre><code>Warning: Removed 1270 rows containing missing values or values outside the scale range
-(`geom_rect()`).</code></pre>
+<div class="cell-output-display">
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><img src="EMT_files/figure-html/plot_conditional_density-6.png" class="img-fluid quarto-figure quarto-figure-center figure-img" width="384"></p>
+</figure>
+</div>
 </div>
 </div>
 </section>
@@ -871,8 +911,6 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
   });
   clipboard.on('success', onCopySuccess);
   if (window.document.getElementById('quarto-embedded-source-code-modal')) {
-    // For code content inside modals, clipBoardJS needs to be initialized with a container option
-    // TODO: Check when it could be a function (https://github.com/zenorocha/clipboard.js/issues/860)
     const clipboardModal = new window.ClipboardJS('.code-copy-button[data-in-quarto-modal]', {
       text: getTextToCopy,
       container: window.document.getElementById('quarto-embedded-source-code-modal')
@@ -983,7 +1021,6 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
       if (window.Quarto?.typesetMath) {
         window.Quarto.typesetMath(note);
       }
-      // TODO in 1.5, we should make sure this works without a callout special case
       if (note.classList.contains("callout")) {
         return note.outerHTML;
       } else {

@@ -154,6 +154,7 @@ for(day in seq(2, 12, by = 2)){
 Number of cells in E/M phenotype each day:
 
 ```{r em_sample_size}
+# Table 6 in supplement 
 cat("Control cells in E/M phenotype:")
 table(control_data_em$day)
 cat("Treated cells in E/M phenotype:")
@@ -331,7 +332,8 @@ for(i in 1:3){
 }
 ```
 
-```{r marginal_viz, message = F}
+```{r marginal_viz, message = F, fig.height=3, fig.width = 4, fig.align="center"}
+# Figure 4 in supplement 
 for(i in 1:3){
   for(type in c("treated", "control")){
     
@@ -391,9 +393,9 @@ for(i in 1:3){
        x = "Podoplanin", 
        y = "CD44") 
   
-
-ggsave(g, filename = filename, 
-         width = 5, height = 4, units = "in")
+    print(g)
+# save figure
+# ggsave(g, filename = filename, width = 5, height = 4, units = "in")
   }
 }
 ```
@@ -460,7 +462,8 @@ for(i in 1:3){
 # save.image(file = paste0(dir_work, "V2/EMT_5d.RData"))
 ```
 
-```{r plot_conditional_density, message = F}
+```{r plot_conditional_density, message = F, fig.height=3, fig.width = 4, fig.align="center"}
+# Figure 8 in paper 
 for(i in 1:3){
   for(type in c("treated", "control")){
     
@@ -477,9 +480,9 @@ for(i in 1:3){
       dplyr::filter(x > 0.5, y > 0.5)
 
     if(type == "treated"){
-      title <- paste0("Period ", i, " Treated" )
+      title <- paste0("Period ", i, " Treated - E/M cells" )
     }else{
-      title <- paste0("Period ", i, " Control" )
+      title <- paste0("Period ", i, " Control - E/M cells" )
     }
 
     filename <- paste0(fig_dir, "Podoplanin_CD44_conditional_",i, "_", type, ".png")
@@ -521,10 +524,11 @@ for(i in 1:3){
   labs(title = title, 
        x = "Podoplanin", 
        y = "CD44") 
+    
+    print(g)
   
-
-ggsave(g, filename = filename, 
-         width = 5, height = 4, units = "in")
+# save figure
+# ggsave(g, filename = filename, width = 5, height = 4, units = "in")
   }
 }
 ```
