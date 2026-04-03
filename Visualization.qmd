@@ -192,7 +192,7 @@ counts <- numeric(nrow(lower))
 for(i in 1:nrow(lower)){
   counts[i] <- sum(apply(X_3d, 1, function(t) prod(t < upper[i, ])) * 
     apply(X_3d, 1, function(t) prod(t >= lower[i, ])))
-  cat(i, ":", counts[i], "\n")
+  # cat(i, ":", counts[i], "\n")
 }
 FixedHist3d <- cbind(lower, upper, (counts + 1) / n_3d / apply(upper - lower, 1, prod))
 
@@ -383,7 +383,7 @@ As in the adaptive histogram, we significantly underestimate the probability mas
 sum(plot_data_bounded_conditional$est_prob[,1]) 
 ```
 
-```{r ex5_save_figure include = F, echo = F}
+```{r ex5_save_figure, include = F, echo = F}
 ggsave(g_adaptive_conditional, filename = "ex6_adaptive_conditional.png", path = fig_dir, width = 6, height = 4, units = "in")
 ggsave(g_adaptive, filename = "ex6_adaptive.png", path = fig_dir, width = 5, height = 4, units = "in")
 ggsave(g_bounded, filename = "ex6_bounded.png", path = fig_dir, width = 5, height = 4, units = "in")
@@ -465,7 +465,7 @@ g_density_hd <- plot_density(true_probs = true_probs_hd,
 grid.arrange(g_adaptive_hd, g_density_hd,  nrow = 1)
 ```
 
-```{r ex6_save_fig include = F, eval = F}
+```{r ex6_save_fig, include = F, eval = F}
 ggsave(g_density_hd, filename = "ex7_density.png", path = fig_dir, width = 5, height = 4, units = "in")
 ggsave(g_adaptive_hd, filename = "ex7_adaptive_hd.png", path = fig_dir, width = 6, height = 4, units = "in")
 ```
