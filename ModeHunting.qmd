@@ -134,9 +134,16 @@ plotdensity <- function(hist, d, g, A, B){
 
 ```{r plot-2d-modes, fig.width = 8, fig.height = 4}
 colnames(mu_2d) <- c("x", "y")
+# Figure 7 (a) in paper
 FigMode2d <- PlotModes2D(hist2d, mu_2d, candidate2d$mode)
+# Figure 7 (b) in paper 
 FigCI2d <- plotdensity(hist2d, d = 2, g = candidate2d$g, A = candidate2d$mode[1], B = candidate2d$mode[2] )
 
+FigMode2d
+FigCI2d
+```
+
+```{r include = F, echo = F}
 ggsave(filename =  "mode.png", plot = FigMode2d,path = fig_dir, width = 4.5, height = 3, units = "in")
 ggsave(filename =  "ci.png", plot = FigCI2d,path = fig_dir, width = 4.5, height = 3, units = "in")
 
@@ -180,6 +187,7 @@ get_center <- function(hist, d, candidate_modes, ndigits){
   return(list(dat = dat, order = order))
 }
 
+# Table 1 in paper 
 knitr::kable(get_center(hist3d, 3, candidate3d$mode, 2)$dat)
 ```
 
@@ -192,7 +200,7 @@ candidate3dApproximate <- FindModesApproximate(hist3d, d_3d, L = 20, B = 10000)
 knitr::kable(get_center(hist3d, 3, candidate3dApproximate$mode, 2)$dat)
 ```
 
-## Numerical studies of the mode hunting algorithms 
+## Numerical studies of the mode hunting algorithms
 
 We conduct a few simulation studies to evaluate accuracy and computation cost of the approximate and exact algorithms.
 

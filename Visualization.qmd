@@ -18,16 +18,16 @@ dir_home <- "/Users/zq/qianzhao@umass.edu - Google Drive/My Drive/Research/Histo
 dir_work <- "/Users/qianzhao/Google Drive/My Drive/Research/Histogram/"
 
 # load the BetaTrees package
-load_all( path = paste0(dir_home, "BetaTree/JASA/V1/BetaTrees-JASA-v1/R/"))
+load_all( path = paste0(dir_work, "BetaTree/JASA/V1/BetaTrees-JASA-v1/R/"))
 
 # load functions 
-source(paste0(dir_home,  "BetaTree/JASA/V2/src/univariate.R"))
-source(paste0(dir_home,  "BetaTree/JASA/V2/src/sample_obs.R"))
-source(paste0(dir_home,  "BetaTree/JASA/V2/src/adaptive.R"))
-source(paste0(dir_home,  "BetaTree/JASA/V2/src/summary.R"))
+source(paste0(dir_work,  "BetaTree/JASA/V2/src/univariate.R"))
+source(paste0(dir_work,  "BetaTree/JASA/V2/src/sample_obs.R"))
+source(paste0(dir_work,  "BetaTree/JASA/V2/src/adaptive.R"))
+source(paste0(dir_work,  "BetaTree/JASA/V2/src/summary.R"))
 
-fig_dir <- paste0(dir_home, "BetaTree/JASA/V2/Fig/")
-data_dir <- paste0("/Users/zq/qianzhao@umass.edu - Google Drive/My Drive/Research/Histogram/Experiments/data/")
+fig_dir <- paste0(dir_work, "BetaTree/JASA/V3/Fig")
+data_dir <- paste0(paste0(dir_work, "Experiments/data/"))
 ```
 
 This notebook includes code to replicate results in Section 4 of the paper "Beta-trees: multivariate histograms with confidence statements".
@@ -37,13 +37,17 @@ This notebook includes code to replicate results in Section 4 of the paper "Beta
 In the first example, we visualize the Beta-tree histograms and corresponding confidence intervals for univariate distributions. We consider two distributions: standard Gaussian and Harp density, defined in Li et al. (2020).
 
 ```{r ex1}
+# Figure 1 in paper and Figure 1 in supplement (use alpha = 0.01, 0.1, 0.2 in the three figures)
 alpha_val <- 0.01
 hist_gaussian <- plot_univariate(n = 2000, distribution = "gaussian", alpha = alpha_val)
 hist_harp <- plot_univariate(n = 2000, distribution = "harp", alpha = alpha_val)
 
 hist_gaussian$g_hist
 hist_harp$g_hist
+```
 
+```{r eval = F, include = F}
+# save plots
 ggsave(filename = paste0("gaussian_1d_", alpha_val, ".png"), path =  fig_dir, plot = hist_gaussian$g_hist, units = "in", width = 5, height = 4)
 ggsave(filename = paste0("harp_1d_", alpha_val, ".png"), path =  fig_dir, plot = hist_harp$g_hist, units = "in", width = 5, height = 4)
 ```
@@ -58,7 +62,12 @@ d <- 2
 X <- matrix(runif(n*d), n, d)
 hist_uniform <- BuildHist(X, alpha = 0.1, method = "weighted_bonferroni", plot = T, 
                           bounded = T, option = "qt", qt = c(0.005, 0.005))
+# Figure 2 (right) in paper 
 g_unif <- PlotHist(X, hist_uniform)
+```
+
+```{r eval = F, include = F}
+# save plots
 ggsave(filename = paste0("unif1000.png"), path =  fig_dir, plot = g_unif, units = "in", width = 5, height = 4)
 ```
 
@@ -76,17 +85,20 @@ X_gaussian_large <- sample_gaussian(n = 20000, d = 2, sigma = Sigma)
 hist_gaussian_large <- BuildHist(X_gaussian_large, alpha = 0.1, method = "weighted_bonferroni", plot = T)
 hist_gaussian_large_bounded <- BuildHist(X_gaussian_large, alpha = 0.1, method = "weighted_bonferroni", plot = T, bounded = T, option = "qt", qt = c(0.005, 0.005))
 
+# Figure 2 in paper (left)
 g_gaussian_small <- PlotHist(X_gaussian_small, hist_gaussian_small)
+# Figure 3 in paper (left)
 g_gaussian_large <- PlotHist(X_gaussian_large, hist_gaussian_large)
+# Figure 3 in paper (right)
 g_gaussian_large_bounded <- PlotHist(X_gaussian_large, hist_gaussian_large_bounded)
+```
 
-
+```{r eval = F, include = F}
+# save plots
 ggsave(filename = paste0("normal1000.png"), path =  fig_dir, plot = g_gaussian_small, units = "in", width = 5, height = 4)
 ggsave(filename = paste0("normal20k.png"), path =  fig_dir, plot = g_gaussian_large, units = "in", width = 5, height = 4)
 ggsave(filename = paste0("normal20kbdd.png"), path =  fig_dir, plot = g_gaussian_large_bounded, units = "in", width = 5, height = 4)
 ```
-
-\
 
 ```{r ex2_ci}
 nrect <- nrow(hist_gaussian_small)
@@ -97,6 +109,7 @@ for(i in 1:nrect){
                             mean = c(0, 0), sigma = Sigma) / (hist_gaussian_small[i, 4] - hist_gaussian_small[i, 2]) / (hist_gaussian_small[i, 3] - hist_gaussian_small[i, 1])
 }
 
+# Figure 2 in supplement 
 g_density_2d <- ggplot() + 
   geom_point(aes(x = avg_density, y = hist_gaussian_small[, 5] )) + 
   geom_segment(aes(x = avg_density, 
@@ -111,7 +124,10 @@ g_density_2d <- ggplot() +
   ylab("Estimated density") + 
   theme_classic() + 
   theme(text = element_text(size = 18)) 
+```
 
+```{r include = F, eval = F}
+# save plots
 ggsave(g_density_2d, filename = paste0(fig_dir, "est_density.png"), 
            width = 5, height = 4, units = "in")
 ```
@@ -203,10 +219,12 @@ dat <- tibble(
   Y = kernel3dloc$y,
   Density = kernel3dval
 )
+# Figure 4 (a) in paper 
 FigKernel3d <- ggplot(data = dat, aes(X, Y, z = Density)) + geom_contour_filled() + xlim(-4,4.5) + xlab("X") +ylab("Y") + theme_classic()
 
 # 2. fixed bin histogram
 # dim indicates which dimension is *orthogonal* to the slice
+# Figure 4 (b) in paper
 plot3dhist <- function(hist, xinside, loc, dim, xlab = "X", ylab = "Y"){
   xinside <- xinside[,-dim]
   index <- (1:6)[-c(dim, dim+3)]
@@ -223,11 +241,15 @@ plot3dhist <- function(hist, xinside, loc, dim, xlab = "X", ylab = "Y"){
 FigFixed3d <- plot3dhist(FixedHist3d, xinside, zloc, dim = 3)
 
 # 3. Beta-trees histogram 
+# Figure 4 (c) in paper
 FigHist3d <- plot3dhist(hist3d, xinside, zloc, dim = 3)
 # 4. Bounded beta-trees histogram
+# Figure 4 (d) in paper 
 FigBoundedHist3d <- plot3dhist(histBounded3d, xinside, zloc, dim = 3)
+```
 
-# store each figure
+```{r include = F, eval = F}
+# save plots
 ggsave(filename =  "kernel3d.png", plot = FigKernel3d,path = fig_dir, width = 4.5, height = 3, units = "in")
 ggsave(filename =  "fixed3d.png", plot = FigFixed3d,path = fig_dir, width = 4.5, height = 3, units = "in")
 ggsave(filename =  "hist3d.png", plot = FigHist3d,path = fig_dir, width = 4.5, height = 3, units = "in")
@@ -289,6 +311,7 @@ true_probs_adaptive <- compute_probability_mass(rect = adaptive_hist[,1:(2*d_10d
 ```
 
 ```{r ex5_plot_density_adaptive}
+# Figure 5 (b) in paper
 g_adaptive <- plot_density(true_probs_adaptive, 
                            est_avg_density = adaptive_hist[,2*d_10d+1],
                            lower_bound = adaptive_hist[,2*d_10d+2], 
@@ -306,7 +329,7 @@ plot_data_adaptive_conditional <- plot_histogram_data(X = as.matrix(data),
                                                       show_data = TRUE,
                                                       ndat = 1000
                                                       ) 
-
+# Figure 5 (a) in paper 
 g_adaptive_conditional <- plot_histogram(plot_data_adaptive_conditional, show_data = T)
 
 grid.arrange(g_adaptive_conditional, g_adaptive,  nrow = 1)
@@ -333,6 +356,7 @@ true_probs_bounded <- compute_probability_mass(rect = bounded_hist[,1:(2*d_10d)]
                                                mu = mu, sigma = sigma, 
                                                coord = coord, prob = prob)
 
+# Figure 3 (b) in supplement 
 g_bounded <- plot_density(true_probs_bounded, 
                           est_avg_density = bounded_hist[,2*d_10d+1], 
                           lower_bound = bounded_hist[,2*d_10d+2], 
@@ -347,6 +371,7 @@ plot_data_bounded_conditional <- plot_histogram_data(X = as.matrix(data),
                                                      show_data = TRUE, ndat = 1000
                                                      ) 
 
+# Figure 3 (a) in supplement 
 g_bounded_conditional <- plot_histogram(plot_data_bounded_conditional, show_data = T)
 
 grid.arrange(g_bounded_conditional, g_bounded,  nrow = 1)
@@ -358,7 +383,7 @@ As in the adaptive histogram, we significantly underestimate the probability mas
 sum(plot_data_bounded_conditional$est_prob[,1]) 
 ```
 
-```{r ex5_save_figure}
+```{r ex5_save_figure include = F, echo = F}
 ggsave(g_adaptive_conditional, filename = "ex6_adaptive_conditional.png", path = fig_dir, width = 6, height = 4, units = "in")
 ggsave(g_adaptive, filename = "ex6_adaptive.png", path = fig_dir, width = 5, height = 4, units = "in")
 ggsave(g_bounded, filename = "ex6_bounded.png", path = fig_dir, width = 5, height = 4, units = "in")
@@ -425,9 +450,12 @@ plot_data_hd <- plot_histogram_data(X = as.matrix(data),
                                     plot_coord = c(1, 2), nint = 40,
                                     show_data = T, ndat = 1000
                                  ) 
+
+# Figure 6 (a) in paper 
 g_adaptive_hd <- plot_histogram(plot_data_hd)
 
 true_probs_hd <- compute_probability_mass(rect = adaptive_hist[,1:(2*d_30d)], distribution = "hd")
+# Figure 6 (b) in paper 
 g_density_hd <- plot_density(true_probs = true_probs_hd, 
                              est_avg_density = adaptive_hist[,2*d_30d+1], 
                              lower_bound = adaptive_hist[,2*d_30d+2], 
@@ -437,7 +465,7 @@ g_density_hd <- plot_density(true_probs = true_probs_hd,
 grid.arrange(g_adaptive_hd, g_density_hd,  nrow = 1)
 ```
 
-```{r ex6_save_fig}
+```{r ex6_save_fig include = F, eval = F}
 ggsave(g_density_hd, filename = "ex7_density.png", path = fig_dir, width = 5, height = 4, units = "in")
 ggsave(g_adaptive_hd, filename = "ex7_adaptive_hd.png", path = fig_dir, width = 6, height = 4, units = "in")
 ```
