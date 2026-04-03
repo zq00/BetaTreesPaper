@@ -72,6 +72,7 @@ modes_adaptive_control <- FindModesApproximate(hist_adaptive_control, d = d, L =
 ```
 
 ```{r mode_location}
+# Table 2 in paper 
 case_lower <- round(hist_adaptive_pos[modes_adaptive_pos$mode, 1:d], 2)
 case_upper <- round(hist_adaptive_pos[modes_adaptive_pos$mode, (d+1):(2*d)], 2)
 
@@ -144,7 +145,8 @@ nrow(data_pos_2) / nrow(GvHD.pos.scaled)
 nrow(data_control_2) / nrow(GvHD.control.scaled)
 ```
 
-```{r plot}
+```{r plot,  fig.height=3, fig.width = 4, fig.align="center"}
+# Figure 9 in paper 
 lim_2 <- c(-2, 4)
 lim_1 <- c(-2.5, 2.5)
 
@@ -195,8 +197,10 @@ for(i in 1:2){
   labs(title = title, 
        x = "CD4", 
        y = "CD8b") 
+    
+    print(g)
 
-    ggsave(filename =  paste0("GvHD_", type, "_", i, ".png"), plot = g,path = fig_dir, width = 4.5, height = 3, units = "in")
+    # ggsave(filename =  paste0("GvHD_", type, "_", i, ".png"), plot = g,path = fig_dir, width = 4.5, height = 3, units = "in")
  }
 }
 
