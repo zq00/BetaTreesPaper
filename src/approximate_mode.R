@@ -7,7 +7,7 @@
 # d - data dimension
 # L - path length 
 # B - number of paths 
-FindModesApproximate <- function(hist, d, L, B){
+FindModesApproximate <- function(hist, d, L, B, verbose = FALSE){
   cluster <- list() # cluster stores the regions where reaching those nodes is equivalent to reaching the mode
   
   density <- hist[,(2*d+1)] # empirical density of each region
@@ -31,15 +31,18 @@ FindModesApproximate <- function(hist, d, L, B){
   cluster[[1]] <- find_neighbors(mode[1], g, ci)
   candidates<- setdiff(node_order[-1], cluster[[1]])
   
-  cat("Total # nodes = ", nrow(hist), "\n")
-  cat("# regions in 1st cluster = ", length(cluster[[1]]), "\n")
-  cat("# candidate modes = ", length(candidates), "\n")
+  if(verbose){
+    cat("Total # nodes = ", nrow(hist), "\n")
+    cat("# regions in 1st cluster = ", length(cluster[[1]]), "\n")
+    cat("# candidate modes = ", length(candidates), "\n")
+  }
+  
   
   nmodes <- 1
   while(length(candidates) > 0){
     connected <- connected_to_modes(candidates[1], mode, g, cluster, ci, L, B)
     
-    if(length(candidates) %% 100 == 0) cat("\n",connected$nn, "\n")
+    if(length(candidates) %% 100 == 0 && verbose) cat("\n",connected$nn, "\n")
     if(connected$connected == "unconnected"){
       nmodes <- nmodes + 1
       mode <- c(mode, candidates[1])
@@ -47,8 +50,11 @@ FindModesApproximate <- function(hist, d, L, B){
       cluster[[nmodes]] <- find_neighbors(mode[nmodes], g, ci)
       candidates<- setdiff(candidates[-1], cluster[[nmodes]])
       
-      cat("# regions in", nmodes, "-th cluster = ", length(cluster[[nmodes]]), "\n")
-      cat("# candidate modes = ", length(candidates), "\n")
+      if(verbose){
+        cat("# regions in", nmodes, "-th cluster = ", length(cluster[[nmodes]]), "\n")
+        cat("# candidate modes = ", length(candidates), "\n")
+      }
+      
     }else{
       candidates <- candidates[-1]
     }
