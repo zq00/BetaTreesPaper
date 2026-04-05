@@ -2,7 +2,7 @@
 <html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en"><head>
 
 <meta charset="utf-8">
-<meta name="generator" content="quarto-1.6.42">
+<meta name="generator" content="quarto-1.6.32">
 
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
 
@@ -63,10 +63,10 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <script src="EMT_files/libs/quarto-html/tippy.umd.min.js"></script>
 <script src="EMT_files/libs/quarto-html/anchor.min.js"></script>
 <link href="EMT_files/libs/quarto-html/tippy.css" rel="stylesheet">
-<link href="EMT_files/libs/quarto-html/quarto-syntax-highlighting-2f5df379a58b258e96c21c0638c20c03.css" rel="stylesheet" id="quarto-text-highlighting-styles">
+<link href="EMT_files/libs/quarto-html/quarto-syntax-highlighting-2486e1f0a3ee9ee1fc393803a1361cdb.css" rel="stylesheet" id="quarto-text-highlighting-styles">
 <script src="EMT_files/libs/bootstrap/bootstrap.min.js"></script>
 <link href="EMT_files/libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
-<link href="EMT_files/libs/bootstrap/bootstrap-c0367b04c37547644fece4185067e4a7.min.css" rel="stylesheet" append-hash="true" id="quarto-bootstrap" data-mode="light">
+<link href="EMT_files/libs/bootstrap/bootstrap-677b520d69fcc55ab41b4b425631e74d.min.css" rel="stylesheet" append-hash="true" id="quarto-bootstrap" data-mode="light">
 
 
 </head>
@@ -128,7 +128,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a>  <span class="cf">for</span>(trip <span class="cf">in</span> <span class="dv">1</span><span class="sc">:</span><span class="dv">3</span>){</span>
 <span id="cb3-4"><a href="#cb3-4" aria-hidden="true" tabindex="-1"></a>    file_control_name <span class="ot">&lt;-</span> <span class="fu">paste0</span>(<span class="st">"HMLE_d"</span>, <span class="fu">str_pad</span>(day, <span class="dv">2</span>, <span class="at">pad =</span> <span class="st">"0"</span>, <span class="at">side =</span> <span class="st">"left"</span>), <span class="st">"_ctrl_TC2_trip"</span>, trip, <span class="st">"_LiveCell.fcs"</span>)</span>
 <span id="cb3-5"><a href="#cb3-5" aria-hidden="true" tabindex="-1"></a>    </span>
-<span id="cb3-6"><a href="#cb3-6" aria-hidden="true" tabindex="-1"></a>    x <span class="ot">&lt;-</span> <span class="fu">read.FCS</span>(<span class="fu">paste0</span>(data_dir_work, file_control_name), <span class="at">transformation=</span><span class="cn">FALSE</span>)</span>
+<span id="cb3-6"><a href="#cb3-6" aria-hidden="true" tabindex="-1"></a>    x <span class="ot">&lt;-</span> <span class="fu">read.FCS</span>(<span class="fu">paste0</span>(data_dir, file_control_name), <span class="at">transformation=</span><span class="cn">FALSE</span>)</span>
 <span id="cb3-7"><a href="#cb3-7" aria-hidden="true" tabindex="-1"></a>    after <span class="ot">&lt;-</span> <span class="fu">transform</span>(x, trans) <span class="co"># logicle transformation</span></span>
 <span id="cb3-8"><a href="#cb3-8" aria-hidden="true" tabindex="-1"></a>    df_new <span class="ot">&lt;-</span> <span class="fu">as_tibble</span>(after<span class="sc">@</span>exprs) <span class="sc">%&gt;%</span> </span>
 <span id="cb3-9"><a href="#cb3-9" aria-hidden="true" tabindex="-1"></a>      dplyr<span class="sc">::</span><span class="fu">select</span>(<span class="fu">all_of</span>(var_names_all)) <span class="sc">%&gt;%</span> </span>
@@ -148,7 +148,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <span id="cb4-4"><a href="#cb4-4" aria-hidden="true" tabindex="-1"></a>    </span>
 <span id="cb4-5"><a href="#cb4-5" aria-hidden="true" tabindex="-1"></a>    file_treated_name <span class="ot">&lt;-</span> <span class="fu">paste0</span>(<span class="st">"HMLE_d"</span>, <span class="fu">str_pad</span>(day, <span class="dv">2</span>, <span class="at">pad =</span> <span class="st">"0"</span>, <span class="at">side =</span> <span class="st">"left"</span>), <span class="st">"_TGFb_TC2_trip"</span>, trip, <span class="st">"_LiveCell.fcs"</span>)</span>
 <span id="cb4-6"><a href="#cb4-6" aria-hidden="true" tabindex="-1"></a>    </span>
-<span id="cb4-7"><a href="#cb4-7" aria-hidden="true" tabindex="-1"></a>    x <span class="ot">&lt;-</span> <span class="fu">read.FCS</span>(<span class="fu">paste0</span>(data_dir_work, file_treated_name), <span class="at">transformation=</span><span class="cn">FALSE</span>)</span>
+<span id="cb4-7"><a href="#cb4-7" aria-hidden="true" tabindex="-1"></a>    x <span class="ot">&lt;-</span> <span class="fu">read.FCS</span>(<span class="fu">paste0</span>(data_dir, file_treated_name), <span class="at">transformation=</span><span class="cn">FALSE</span>)</span>
 <span id="cb4-8"><a href="#cb4-8" aria-hidden="true" tabindex="-1"></a>    after <span class="ot">&lt;-</span> <span class="fu">transform</span>(x, trans) <span class="co"># logicle transformation</span></span>
 <span id="cb4-9"><a href="#cb4-9" aria-hidden="true" tabindex="-1"></a>    df_new <span class="ot">&lt;-</span> <span class="fu">as_tibble</span>(after<span class="sc">@</span>exprs) <span class="sc">%&gt;%</span> </span>
 <span id="cb4-10"><a href="#cb4-10" aria-hidden="true" tabindex="-1"></a>      dplyr<span class="sc">::</span><span class="fu">select</span>(<span class="fu">all_of</span>(var_names_all)) <span class="sc">%&gt;%</span> </span>
@@ -199,7 +199,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <span id="cb14-3"><a href="#cb14-3" aria-hidden="true" tabindex="-1"></a>  <span class="cf">for</span>(trip <span class="cf">in</span> <span class="dv">1</span><span class="sc">:</span><span class="dv">3</span>){</span>
 <span id="cb14-4"><a href="#cb14-4" aria-hidden="true" tabindex="-1"></a>    file_control_name <span class="ot">&lt;-</span> <span class="fu">paste0</span>(<span class="st">"HMLE_d"</span>, <span class="fu">str_pad</span>(day, <span class="dv">2</span>, <span class="at">pad =</span> <span class="st">"0"</span>, <span class="at">side =</span> <span class="st">"left"</span>), <span class="st">"_ctrl_TC2_trip"</span>, trip, <span class="st">"_LiveCell.fcs"</span>)</span>
 <span id="cb14-5"><a href="#cb14-5" aria-hidden="true" tabindex="-1"></a>    </span>
-<span id="cb14-6"><a href="#cb14-6" aria-hidden="true" tabindex="-1"></a>    x <span class="ot">&lt;-</span> <span class="fu">read.FCS</span>(<span class="fu">paste0</span>(data_dir_work, file_control_name), <span class="at">transformation=</span><span class="cn">FALSE</span>)</span>
+<span id="cb14-6"><a href="#cb14-6" aria-hidden="true" tabindex="-1"></a>    x <span class="ot">&lt;-</span> <span class="fu">read.FCS</span>(<span class="fu">paste0</span>(data_dir, file_control_name), <span class="at">transformation=</span><span class="cn">FALSE</span>)</span>
 <span id="cb14-7"><a href="#cb14-7" aria-hidden="true" tabindex="-1"></a>    x <span class="ot">&lt;-</span> <span class="fu">Subset</span>(x, gate_em) <span class="co"># gating </span></span>
 <span id="cb14-8"><a href="#cb14-8" aria-hidden="true" tabindex="-1"></a>    after <span class="ot">&lt;-</span> <span class="fu">transform</span>(x, trans) <span class="co"># logicle transformation</span></span>
 <span id="cb14-9"><a href="#cb14-9" aria-hidden="true" tabindex="-1"></a>    df_new <span class="ot">&lt;-</span> <span class="fu">as_tibble</span>(after<span class="sc">@</span>exprs) <span class="sc">%&gt;%</span> </span>
@@ -217,7 +217,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <span id="cb15-4"><a href="#cb15-4" aria-hidden="true" tabindex="-1"></a>    </span>
 <span id="cb15-5"><a href="#cb15-5" aria-hidden="true" tabindex="-1"></a>    file_treated_name <span class="ot">&lt;-</span> <span class="fu">paste0</span>(<span class="st">"HMLE_d"</span>, <span class="fu">str_pad</span>(day, <span class="dv">2</span>, <span class="at">pad =</span> <span class="st">"0"</span>, <span class="at">side =</span> <span class="st">"left"</span>), <span class="st">"_TGFb_TC2_trip"</span>, trip, <span class="st">"_LiveCell.fcs"</span>)</span>
 <span id="cb15-6"><a href="#cb15-6" aria-hidden="true" tabindex="-1"></a>    </span>
-<span id="cb15-7"><a href="#cb15-7" aria-hidden="true" tabindex="-1"></a>    x <span class="ot">&lt;-</span> <span class="fu">read.FCS</span>(<span class="fu">paste0</span>(data_dir_work, file_treated_name), <span class="at">transformation=</span><span class="cn">FALSE</span>)</span>
+<span id="cb15-7"><a href="#cb15-7" aria-hidden="true" tabindex="-1"></a>    x <span class="ot">&lt;-</span> <span class="fu">read.FCS</span>(<span class="fu">paste0</span>(data_dir, file_treated_name), <span class="at">transformation=</span><span class="cn">FALSE</span>)</span>
 <span id="cb15-8"><a href="#cb15-8" aria-hidden="true" tabindex="-1"></a>    x <span class="ot">&lt;-</span> <span class="fu">Subset</span>(x, gate_em) <span class="co"># gating </span></span>
 <span id="cb15-9"><a href="#cb15-9" aria-hidden="true" tabindex="-1"></a>    after <span class="ot">&lt;-</span> <span class="fu">transform</span>(x, trans) <span class="co"># logicle transformation</span></span>
 <span id="cb15-10"><a href="#cb15-10" aria-hidden="true" tabindex="-1"></a>    df_new <span class="ot">&lt;-</span> <span class="fu">as_tibble</span>(after<span class="sc">@</span>exprs) <span class="sc">%&gt;%</span> </span>
@@ -911,6 +911,8 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
   });
   clipboard.on('success', onCopySuccess);
   if (window.document.getElementById('quarto-embedded-source-code-modal')) {
+    // For code content inside modals, clipBoardJS needs to be initialized with a container option
+    // TODO: Check when it could be a function (https://github.com/zenorocha/clipboard.js/issues/860)
     const clipboardModal = new window.ClipboardJS('.code-copy-button[data-in-quarto-modal]', {
       text: getTextToCopy,
       container: window.document.getElementById('quarto-embedded-source-code-modal')
@@ -1021,6 +1023,7 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
       if (window.Quarto?.typesetMath) {
         window.Quarto.typesetMath(note);
       }
+      // TODO in 1.5, we should make sure this works without a callout special case
       if (note.classList.contains("callout")) {
         return note.outerHTML;
       } else {

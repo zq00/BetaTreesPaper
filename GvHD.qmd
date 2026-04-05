@@ -7,20 +7,24 @@ editor: visual
 ```{r setup, include = F}
 knitr::opts_chunk$set(echo = TRUE)
 pacman::p_load(tidyverse, mvtnorm, stringr, MASS, spatstat, GoFKernel, goftest, igraph, 
-               tidyr, flowCore, gridExtra, mclust) 
+               tidyr, flowCore, gridExtra, devtools, mclust) 
 
-dir_home <- "/Users/zq/Library/CloudStorage/GoogleDrive-qianzhao@umass.edu/My Drive/Research/Histogram/BetaTree/JASA/"
-dir_work <- "/Users/qianzhao/Google Drive/My Drive/Research/Histogram/BetaTree/JASA/"
+package_dir_home <- "/Users/zq/Documents/GitHub/"
+dir_home <- "/Users/zq/qianzhao@umass.edu - Google Drive/My Drive/Research/Histogram/"
+dir_work <- "/Users/qianzhao/Google Drive/My Drive/Research/Histogram/"
 
-source_code_dir <- paste0(dir_work, "V2/src/")  
-src_file_names <- list.files(source_code_dir, full.names = T)
-for(f_path in src_file_names){source(f_path)}
+# load the BetaTrees package
+load_all( path = paste0(package_dir_home, "BetaTree/R/"))
 
-package_code_dir <- paste0(dir_work, "V1/BetaTrees-JASA-v1/R")  
-package_file_names <- list.files(package_code_dir, full.names = T)
-for(f_path in package_file_names){source(f_path)}
+# load functions 
+source(paste0(dir_home,  "BetaTree/JASA/V2/src/univariate.R"))
+source(paste0(dir_home,  "BetaTree/JASA/V2/src/sample_obs.R"))
+source(paste0(dir_home,  "BetaTree/JASA/V2/src/adaptive.R"))
+source(paste0(dir_home,  "BetaTree/JASA/V2/src/summary.R"))
+source(paste0(dir_home,  "BetaTree/JASA/V2/src/approximate_mode.R"))
 
-fig_dir <- paste0(dir_work, "V2/Fig/")
+fig_dir <- paste0(dir_home, "BetaTree/JASA/V3/Fig")
+data_dir <- paste0(dir_home, "BetaTree/JASA/V2/Mass Cytometry FSC Live cells gate_Fig4a-g/")
 ```
 
 Graft-versus-host disease (GvHD) occurs in allogeneic hematopoietic stem cell transplant recipients when donor--immune cells attack on tissues of the recipient. In [this study](https://pubmed.ncbi.nlm.nih.gov/17531779/), researchers used flow cytometry to analyze biomarkers collected peripheral blood samples from patients who underwent bone marrow transplant. They measured 6 biomarkers from 24 patients weekly over the course of 100 days with the objective of identifying biomarkers indicating GvHD. Researchers initially identified 121 subpopulations by manual gating (using the full dataset), among which they pinpointed the population CD3+ CD4+ CD8b+ and CD3+ CD4+ CD8b+CD8+ to be correlated with occurrence of GvHD using functional linear discriminant analysis.

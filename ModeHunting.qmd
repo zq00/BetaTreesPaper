@@ -15,21 +15,22 @@ library(GoFKernel)
 library(igraph)
 library(ggpattern)
 
+package_dir_home <- "/Users/zq/Documents/GitHub/"
 dir_home <- "/Users/zq/qianzhao@umass.edu - Google Drive/My Drive/Research/Histogram/"
 dir_work <- "/Users/qianzhao/Google Drive/My Drive/Research/Histogram/"
 
 # load the BetaTrees package
-load_all(path = paste0(dir_work, "BetaTree/JASA/V1/BetaTrees-JASA-v1/R/"))
+load_all( path = paste0(package_dir_home, "BetaTree/R/"))
 
 # load functions 
-source(paste0(dir_work,  "BetaTree/JASA/V2/src/univariate.R"))
-source(paste0(dir_work,  "BetaTree/JASA/V2/src/sample_obs.R"))
-source(paste0(dir_work,  "BetaTree/JASA/V2/src/adaptive.R"))
-source(paste0(dir_work,  "BetaTree/JASA/V2/src/summary.R"))
-source(paste0(dir_work,  "BetaTree/JASA/V2/src/approximate_mode.R"))
+source(paste0(dir_home,  "BetaTree/JASA/V2/src/univariate.R"))
+source(paste0(dir_home,  "BetaTree/JASA/V2/src/sample_obs.R"))
+source(paste0(dir_home,  "BetaTree/JASA/V2/src/adaptive.R"))
+source(paste0(dir_home,  "BetaTree/JASA/V2/src/summary.R"))
+source(paste0(dir_home,  "BetaTree/JASA/V2/src/approximate_mode.R"))
 
-fig_dir <- paste0(dir_home, "BetaTree/JASA/V2/Fig/")
-data_dir <- paste0("/Users/zq/qianzhao@umass.edu - Google Drive/My Drive/Research/Histogram/Experiments/data/")
+fig_dir <- paste0(dir_home, "BetaTree/JASA/V3/Fig")
+data_dir <- paste0(dir_home, "Experiments/data/")
 ```
 
 ## Applying Beta-trees to identify modes in a distribution

@@ -14,20 +14,21 @@ library(mvtnorm)
 library(GoFKernel)
 library(spatstat)
 
+package_dir_home <- "/Users/zq/Documents/GitHub/"
 dir_home <- "/Users/zq/qianzhao@umass.edu - Google Drive/My Drive/Research/Histogram/"
 dir_work <- "/Users/qianzhao/Google Drive/My Drive/Research/Histogram/"
 
 # load the BetaTrees package
-load_all( path = paste0(dir_work, "BetaTree/JASA/V1/BetaTrees-JASA-v1/R/"))
+load_all( path = paste0(package_dir_home, "BetaTree/R/"))
 
 # load functions 
-source(paste0(dir_work,  "BetaTree/JASA/V2/src/univariate.R"))
-source(paste0(dir_work,  "BetaTree/JASA/V2/src/sample_obs.R"))
-source(paste0(dir_work,  "BetaTree/JASA/V2/src/adaptive.R"))
-source(paste0(dir_work,  "BetaTree/JASA/V2/src/summary.R"))
+source(paste0(dir_home,  "BetaTree/JASA/V2/src/univariate.R"))
+source(paste0(dir_home,  "BetaTree/JASA/V2/src/sample_obs.R"))
+source(paste0(dir_home,  "BetaTree/JASA/V2/src/adaptive.R"))
+source(paste0(dir_home,  "BetaTree/JASA/V2/src/summary.R"))
 
-fig_dir <- paste0(dir_work, "BetaTree/JASA/V3/Fig")
-data_dir <- paste0(paste0(dir_work, "Experiments/data/"))
+fig_dir <- paste0(dir_home, "BetaTree/JASA/V3/Fig")
+data_dir <- paste0(dir_home, "Experiments/data/")
 ```
 
 This notebook includes code to replicate results in Section 4 of the paper "Beta-trees: multivariate histograms with confidence statements".
@@ -222,6 +223,8 @@ dat <- tibble(
 # Figure 4 (a) in paper 
 FigKernel3d <- ggplot(data = dat, aes(X, Y, z = Density)) + geom_contour_filled() + xlim(-4,4.5) + xlab("X") +ylab("Y") + theme_classic()
 
+FigKernel3d
+
 # 2. fixed bin histogram
 # dim indicates which dimension is *orthogonal* to the slice
 # Figure 4 (b) in paper
@@ -240,12 +243,18 @@ plot3dhist <- function(hist, xinside, loc, dim, xlab = "X", ylab = "Y"){
 }
 FigFixed3d <- plot3dhist(FixedHist3d, xinside, zloc, dim = 3)
 
+FigFixed3d
+
 # 3. Beta-trees histogram 
 # Figure 4 (c) in paper
 FigHist3d <- plot3dhist(hist3d, xinside, zloc, dim = 3)
+
+FigHist3d
 # 4. Bounded beta-trees histogram
 # Figure 4 (d) in paper 
 FigBoundedHist3d <- plot3dhist(histBounded3d, xinside, zloc, dim = 3)
+
+FigBoundedHist3d
 ```
 
 ```{r include = F, eval = F}
