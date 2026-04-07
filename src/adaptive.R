@@ -110,8 +110,10 @@ build_adaptive_histogram <- function(X, thresh_marginal, thresh_interaction,
   # add a new node in the k-d tree
   add_node <- function(x, node, d, thresh_marginal, thresh_interaction){
     
-    if(is.na(nd[node$depth + 1])){ # the first region at depth d
-        nd[node$depth + 1] <<- 1
+    if (is.na(nd[node$depth + 1])) {
+      nd[node$depth + 1] <<- 1L
+    } else {
+      nd[node$depth + 1] <<- nd[node$depth + 1] + 1L
     }
     
     if (node$ndat < 4*log(n)) { node$leaf = TRUE   # node is leaf, return it marked as such
