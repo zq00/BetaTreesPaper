@@ -9,22 +9,22 @@ knitr::opts_chunk$set(echo = TRUE)
 pacman::p_load(tidyverse, mvtnorm, stringr, MASS, spatstat, GoFKernel, goftest, igraph, 
                tidyr, flowCore, gridExtra, devtools) 
 
-package_dir_home <- "/Users/zq/Documents/GitHub/"
 dir_home <- "/Users/zq/qianzhao@umass.edu - Google Drive/My Drive/Research/Histogram/"
-dir_work <- "/Users/qianzhao/Google Drive/My Drive/Research/Histogram/"
+dir_work <- "/Users/qianzhao/Documents/Research/BetaTrees/"
 
 # load the BetaTrees package
-load_all( path = paste0(package_dir_home, "BetaTree/R/"))
+load_all( path = paste0(dir_work, "BetaTree/R/"))
 
 # load functions 
-source(paste0(dir_home,  "BetaTree/JASA/V2/src/univariate.R"))
-source(paste0(dir_home,  "BetaTree/JASA/V2/src/sample_obs.R"))
-source(paste0(dir_home,  "BetaTree/JASA/V2/src/adaptive.R"))
-source(paste0(dir_home,  "BetaTree/JASA/V2/src/summary.R"))
-source(paste0(dir_home,  "BetaTree/JASA/V2/src/approximate_mode.R"))
+source(paste0(dir_work,  "BetaTreesPaper/src/compute_marginal.R"))
+source(paste0(dir_work,  "BetaTreesPaper/src/summary.R"))
 
-fig_dir <- paste0(dir_home, "BetaTree/JASA/V3/Fig")
-data_dir <- paste0(dir_home, "BetaTree/JASA/V2/Mass Cytometry FSC Live cells gate_Fig4a-g/")
+fig_dir <- paste0(dir_work, "BetaTree/JASA/V3/Fig")
+data_dir <- paste0(paste0(dir_work, "Experiments/data/"))
+
+
+data_dir_home <- paste0(dir_home, "V2/Mass Cytometry FSC Live cells gate_Fig4a-g/") 
+data_dir_work <- "/Users/qianzhao/Google Drive/My Drive/Research/Histogram/BetaTree/JASA/V2/Mass Cytometry FSC Live cells gate_Fig4a-g/"
 ```
 
 Epithelial-mesenchymal transition (EMT) equips breast cancer cells for metastasis and treatment resistance. Detecting of EMT-undergoing cells is challenging because of heterogeneity of cancer cells and phenotypic diversity of EMT-undergoing cells. In the article [Mass cytometric and transcriptomic profiling of epithelial-mesenchymal transitions in human mammary cell lines](https://www.nature.com/articles/s41597-022-01137-4), researchers treated cells from HMLE cell line with TGF\$\beta\$1 to induce EMT. They measured surface protein markers in both treated and control cells to identify protein markers indicative of EMT. The measurements were conducted from day 2 to day 12 every 2 days using mass flow cytometry; the data is available at [Mendeley data](https://data.mendeley.com/datasets/pt3gmyk5r2/2). In this example, we explore how protein expression of treated and control cells differ and how they both evolve over the course of the experiment period.
