@@ -16,16 +16,17 @@ library(spatstat)
 
 package_dir_home <- "/Users/zq/Documents/GitHub/"
 dir_home <- "/Users/zq/qianzhao@umass.edu - Google Drive/My Drive/Research/Histogram/"
-dir_work <- "/Users/qianzhao/Google Drive/My Drive/Research/Histogram/"
+dir_work <- "/Users/qianzhao/Documents/Research/BetaTrees/"
 
 # load the BetaTrees package
-load_all( path = paste0(package_dir_home, "BetaTree/R/"))
+
+load_all( path = paste0(dir_work, "BetaTree/R/"))
 
 # load functions 
-source(paste0(dir_home,  "BetaTree/JASA/V2/src/univariate.R"))
-source(paste0(dir_home,  "BetaTree/JASA/V2/src/sample_obs.R"))
-source(paste0(dir_home,  "BetaTree/JASA/V2/src/adaptive.R"))
-source(paste0(dir_home,  "BetaTree/JASA/V2/src/summary.R"))
+source(paste0(dir_work,  "BetaTreesPaper/src/univariate.R"))
+source(paste0(dir_work,  "BetaTreesPaper/src/sample_obs.R"))
+source(paste0(dir_work,  "BetaTreesPaper/src/compute_marginal.R"))
+source(paste0(dir_work,  "BetaTreesPaper/src/summary.R"))
 
 fig_dir <- paste0(dir_home, "BetaTree/JASA/V3/Fig")
 data_dir <- paste0(dir_home, "Experiments/data/")
@@ -392,7 +393,7 @@ As in the adaptive histogram, we significantly underestimate the probability mas
 sum(plot_data_bounded_conditional$est_prob[,1]) 
 ```
 
-```{r ex5_save_figure, include = F, echo = F}
+```{r ex5_save_figure, include = F, eval= F}
 ggsave(g_adaptive_conditional, filename = "ex6_adaptive_conditional.png", path = fig_dir, width = 6, height = 4, units = "in")
 ggsave(g_adaptive, filename = "ex6_adaptive.png", path = fig_dir, width = 5, height = 4, units = "in")
 ggsave(g_bounded, filename = "ex6_bounded.png", path = fig_dir, width = 5, height = 4, units = "in")
