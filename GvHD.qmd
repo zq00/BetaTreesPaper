@@ -19,7 +19,7 @@ load_all( path = paste0(dir_work, "BetaTree/R/"))
 source(paste0(dir_work,  "BetaTreesPaper/src/compute_marginal.R"))
 source(paste0(dir_work,  "BetaTreesPaper/src/summary.R"))
 
-fig_dir <- paste0(dir_work, "BetaTree/JASA/V3/Fig")
+fig_dir <- "/Users/qianzhao/Google Drive/My Drive/Research/Histogram/BetaTree/JASA/V3/Fig/"
 data_dir <- paste0(paste0(dir_work, "Experiments/data/"))
 ```
 
