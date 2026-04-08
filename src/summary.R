@@ -90,136 +90,7 @@ plot_density <- function(true_probs, est_avg_density, lower_bound, upper_bound, 
     theme(text = element_text(size = 18))
 }
 
-# 3. Visualize the histogram in two dimensions 
-# Plots the marginal distribution of two variables inside a given region 
-# the region is defined by constraints of the form l_j <= Xj <= u_j for all the coordinates 
-# compute the true probability mass in those regions using the true distribution function 
-# INPUT
-# X - data
-# hist - estimated histogram 
-# lower_constraint, upper_constraint - vector of the lower and upper constraints of the regions for plotting
-#   this input is only used for coordinates not plotted.
-#   For the plotting coordinate, use the lower/upper end of the data value +/- 0.1 
-# plot_coord - which coordinate to plot 
-# nint - number of intervals the 2-d plot shows, the number of rectangles shown is nint^2 
-# plot_data - if true, plot a subset of data inside the region (by default, 2000 obs are shown)
-# ... - additional inputs 
-# OUTPUT
-# grid_lower, grid_upper - lower and upper end of the 2-d grid for plotting
-# est_prob - estimated probability in each grid. Note: this is the marginal probability and not the conditional probability
-# plot_coord - coordinates shown in the plot
-# data - data inside the constraints if plotting data 
-plot_histogram_data <- function(X, hist, 
-                                lower_constraint = rep(-Inf, d), 
-                                upper_constraint = rep(Inf, d), 
-                                plot_coord, 
-                                nint, 
-                                show_data = TRUE, ndat = 2000,
-                                ...){
-  
-  d <- ncol(X) # data dimension 
-  
-  lower_constraint[plot_coord] <- apply(X, 2, min)[plot_coord] - 0.1
-  upper_constraint[plot_coord] <- apply(X, 2, max)[plot_coord] + 0.1
-  
-  xval <- seq(lower_constraint[plot_coord[1]], upper_constraint[plot_coord[1]], length.out = nint + 1)
-  yval <- seq(lower_constraint[plot_coord[2]], upper_constraint[plot_coord[2]], length.out = nint + 1)
-  
-  grid_lower <- matrix(rep(lower_constraint, nint^2), ncol = d, byrow = T)
-  grid_lower[,plot_coord] <- as.matrix(expand.grid(xval[1:nint], yval[1:nint]))
-  grid_upper <- matrix(rep(upper_constraint, nint^2), ncol = d, byrow = T)
-  grid_upper[,plot_coord] <- as.matrix(expand.grid(xval[2:(nint+1)], yval[2:(nint+1)]))
-  
-  # calculate intersections of histogram regions with the grids in the plot
-  est_prob <- matrix(NA, nrow(grid_lower), ncol = 3)
-  log_volume <- rowSums(log(hist[,(d+1):(2*d)] - hist[,1:d]))
-  
-  for(i in 1:nrow(grid_lower)){
-    # track progress: 
-    # if(i %% 10 == 0) cat(i, ",")
-    le <- grid_lower[i, ]
-    ue <- grid_upper[i, ]
-    
-    log_volume_intersect <- numeric(nrow(hist))
-    for(j in 1:nrow(hist)){
-      if(prod((hist[j, 1:d] < ue) *  (hist[j, (d+1):(2*d)] > le)) == 1){
-        log_volume_intersect[j] <- sum(log(pmin(hist[j, (d+1):(2*d)] , ue) - pmax(hist[j, 1:d] , le)))
-      }else{
-        log_volume_intersect[j] <- NA
-      }
-    }
-    
-    est_prob[i, 1] <- sum(exp(log(hist[,(2*d+1)]) + log_volume_intersect), na.rm = T)
-    est_prob[i, 2] <- sum(exp(log(hist[,(2*d+2)]) + log_volume_intersect), na.rm = T)
-    est_prob[i, 3] <- sum(exp(log(hist[,(2*d+3)]) + log_volume_intersect), na.rm = T)
-  }
-  
-  if(show_data == FALSE){
-    return(list(
-      grid_lower = grid_lower,
-      grid_upper = grid_upper,
-      plot_coord = plot_coord, 
-      est_prob = est_prob
-    ))
-  }
-  
-  # plot data inside the region 
-  index_inside <- which(apply((t(X) < upper_constraint) * (t(X) > lower_constraint), 2, prod) == 1)
-  if(length(index_inside) > ndat){
-    index <- sample(index_inside,ndat, replace = F)
-  }else{
-    index <- index_inside
-  }
-  
-  list(
-    grid_lower = grid_lower,
-    grid_upper = grid_upper,
-    plot_coord = plot_coord, 
-    est_prob = est_prob,
-    data = X[index, plot_coord]
-  )
-}
-
-
-# 4. Visualize the histogram
-plot_histogram <- function(plot_data, show_data = T){
-    
-  grid_lower_x <-  plot_data$grid_lower[,plot_data$plot_coord[1]]
-  grid_upper_x <- plot_data$grid_upper[,plot_data$plot_coord[1]]
-  grid_lower_y <-  plot_data$grid_lower[,plot_data$plot_coord[2]]
-  grid_upper_y <- plot_data$grid_upper[,plot_data$plot_coord[2]]
-  
-  grid_volume <- (grid_upper_y - grid_lower_y) * (grid_upper_x - grid_lower_x)
-  grid_density <- plot_data$est_prob[,1] / sum(plot_data$est_prob[,1]) / grid_volume
-  
-    g <- ggplot() + 
-      geom_rect(aes(xmin = grid_lower_x , 
-                    xmax = grid_upper_x,
-                    ymin  = grid_lower_y,
-                    ymax = grid_upper_y, 
-                    fill =  grid_density ) ) + 
-      scale_fill_gradient2(low = "white", high = "#08306b",mid = "#6baed6",
-                           midpoint = quantile(grid_density, 0.999), 
-                           aesthetics = "fill",
-                           name = "density") + 
-     
-      scale_x_continuous(expand = expansion(0)) + # see https://ggplot2-book.org/scales-position 
-      scale_y_continuous(expand = expansion(0)) +
-      theme_classic() + 
-       labs(x = "X1", y = "X2", fill = "density") +
-      theme(panel.background = element_blank(),
-            panel.border=element_blank(),
-            text=element_text(size = 18))
-    
-    if(show_data == T){
-      g <- g + geom_point(aes(x = plot_data$data[,1], y = plot_data$data[,2]),
-                                  size = 0.4, alpha =nrow(plot_data$data)^(-0.35))
-    }
-    return(g)
-  
-}
-
-# 5. Compute width of CI
+# 3. Compute width of CI
 # INPUTS
 # d - data dimension
 # B - number of repetitions
@@ -283,7 +154,7 @@ get_summary_stat <- function(d, B = 20, file_path, ... ){
 }
 
 
-# 6. Evaluate the mode hunting algorithm 
+# 4. Evaluate the mode hunting algorithm 
 # INPUTS 
 # n - sample size
 # d - data dimension 
@@ -344,9 +215,16 @@ summary_mode_finding <- function(n, d, m, method, nrep, ndim = 4, ...){
     
     start_time <- Sys.time()
     if(method == "exact"){
-      est_modes <- FindModes(hist_adaptive, d, ...)
+      args <- list(...)
+      if("cutoff" %in% names(args)){
+        est_modes <- FindModes(hist_adaptive, d, cutoff = args$cutoff)
+      }else{
+        est_modes <- FindModes(hist_adaptive, d)
+      }
+      
     }else if(method == "approximate"){
-      est_modes <- FindModesApproximate(hist_adaptive, d, ...)
+      args <- list(...)
+      est_modes <- FindModesApproximate(hist = hist_adaptive, d = d, L = args$L, B = args$B)
     }
     end_time <- Sys.time()
     alg_time[i] <- difftime(end_time, start_time, units = "secs")
@@ -365,7 +243,7 @@ summary_mode_finding <- function(n, d, m, method, nrep, ndim = 4, ...){
   )
 }
 
-# 7. Compute distance between the estimated modes and the center of the Gaussian mixture 
+# 5. Compute distance between the estimated modes and the center of the Gaussian mixture 
 # INPUTS
 # est_modes - indices of estimated modes
 # est_hist - estimated histogram
