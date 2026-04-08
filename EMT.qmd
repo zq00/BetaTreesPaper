@@ -19,12 +19,12 @@ load_all( path = paste0(dir_work, "BetaTree/R/"))
 source(paste0(dir_work,  "BetaTreesPaper/src/compute_marginal.R"))
 source(paste0(dir_work,  "BetaTreesPaper/src/summary.R"))
 
-fig_dir <- paste0(dir_work, "BetaTree/JASA/V3/Fig")
-data_dir <- paste0(paste0(dir_work, "Experiments/data/"))
+fig_dir <- "/Users/qianzhao/Google Drive/My Drive/Research/Histogram/BetaTree/JASA/V3/Fig/"
 
 
 data_dir_home <- paste0(dir_home, "V2/Mass Cytometry FSC Live cells gate_Fig4a-g/") 
 data_dir_work <- "/Users/qianzhao/Google Drive/My Drive/Research/Histogram/BetaTree/JASA/V2/Mass Cytometry FSC Live cells gate_Fig4a-g/"
+data_dir <- data_dir_work
 ```
 
 Epithelial-mesenchymal transition (EMT) equips breast cancer cells for metastasis and treatment resistance. Detecting of EMT-undergoing cells is challenging because of heterogeneity of cancer cells and phenotypic diversity of EMT-undergoing cells. In the article [Mass cytometric and transcriptomic profiling of epithelial-mesenchymal transitions in human mammary cell lines](https://www.nature.com/articles/s41597-022-01137-4), researchers treated cells from HMLE cell line with TGF\$\beta\$1 to induce EMT. They measured surface protein markers in both treated and control cells to identify protein markers indicative of EMT. The measurements were conducted from day 2 to day 12 every 2 days using mass flow cytometry; the data is available at [Mendeley data](https://data.mendeley.com/datasets/pt3gmyk5r2/2). In this example, we explore how protein expression of treated and control cells differ and how they both evolve over the course of the experiment period.
@@ -295,7 +295,7 @@ for(i in 1:3){
   hist_data_control <- result[[i]][["hist_data_control"]]
   hist_control <- result[[i]][["hist_control"]]
   
-  plot_data_control_marginal <- plot_histogram_data(hist_data_control, 
+  plot_data_control_marginal <- plot_histogram_data(as.matrix(hist_data_control), 
                                              hist_control, d, 
                                 lower_constraint = rep(0.5, d), 
                                 upper_constraint = rep(5, d), 
@@ -312,7 +312,7 @@ for(i in 1:3){
   hist_data_treated <- result[[i]][["hist_data_treated"]]
   hist_treated <- result[[i]][["hist_treated"]]
 
-  plot_data_treated_marginal <- plot_histogram_data(hist_data_treated, hist_treated, d, 
+  plot_data_treated_marginal <- plot_histogram_data(as.matrix(hist_data_treated), hist_treated, d, 
                                 lower_constraint = rep(0.5, d), 
                                 upper_constraint = rep(5, d), 
                                 plot_coord = c(3, 4), 
@@ -416,7 +416,7 @@ for(i in 1:3){
   hist_data_control <- result[[i]][["hist_data_control"]]
   hist_control <- result[[i]][["hist_control"]]
   
-  plot_data_control_conditional <- plot_histogram_data(hist_data_control,
+  plot_data_control_conditional <- plot_histogram_data(as.matrix(hist_data_control),
                                                        hist_control, d, 
                                 lower_constraint = c(2.170, 2.484, 0.5, 0.5, 0.5), 
                                 upper_constraint = c(5, 5, 5, 5, 5), 
@@ -436,7 +436,7 @@ for(i in 1:3){
   hist_data_treated<- result[[i]][["hist_data_treated"]]
   hist_treated <- result[[i]][["hist_treated"]]
   
-  plot_data_treated_conditional <- plot_histogram_data(hist_data_treated,
+  plot_data_treated_conditional <- plot_histogram_data(as.matrix(hist_data_treated),
                                                        hist_treated, d, 
                                 lower_constraint = c(2.170, 2.484, 0.5, 0.5, 0.5), 
                                 upper_constraint = c(5, 5, 5, 5, 5), 
@@ -529,7 +529,7 @@ for(i in 1:3){
     print(g)
   
 # save figure
-# ggsave(g, filename = filename, width = 5, height = 4, units = "in")
+ # ggsave(g, filename = filename, width = 5, height = 4, units = "in")
   }
 }
 ```
