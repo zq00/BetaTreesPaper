@@ -142,7 +142,7 @@ window.Quarto = {
 </div>
 <p>We compute the adaptive Beta-trees histogram at 80% confidence level for the GvHD positive and control individuals. We set a seed to keep our results consistent.</p>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb3"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="fu">set.seed</span>(<span class="dv">20</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb3"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="fu">set.seed</span>(<span class="dv">220</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 <div class="cell">
 <div class="sourceCode cell-code" id="cb4"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a>alpha <span class="ot">&lt;-</span> <span class="fl">0.2</span></span>
@@ -177,7 +177,9 @@ window.Quarto = {
 </div>
 <div class="sourceCode cell-code" id="cb8"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a><span class="fu">print</span>(case_lower)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
-<pre><code>[1] -0.36 -0.67 -0.79 -0.71</code></pre>
+<pre><code>      [,1]  [,2]  [,3]  [,4]
+[1,] -0.36 -0.64 -0.45 -0.46
+[2,]  0.00  0.16  0.23 -0.02</code></pre>
 </div>
 <div class="sourceCode cell-code" id="cb10"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a><span class="fu">cat</span>(<span class="st">"Case upper:</span><span class="sc">\n</span><span class="st">"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
@@ -185,7 +187,9 @@ window.Quarto = {
 </div>
 <div class="sourceCode cell-code" id="cb12"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb12-1"><a href="#cb12-1" aria-hidden="true" tabindex="-1"></a><span class="fu">print</span>(case_upper)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
-<pre><code>[1] -0.03 -0.39 -0.43 -0.46</code></pre>
+<pre><code>     [,1]  [,2]  [,3]  [,4]
+[1,] 0.00 -0.42 -0.17 -0.22
+[2,] 2.99  0.31  0.43  0.21</code></pre>
 </div>
 <div class="sourceCode cell-code" id="cb14"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb14-1"><a href="#cb14-1" aria-hidden="true" tabindex="-1"></a><span class="fu">cat</span>(<span class="st">"Control lower: </span><span class="sc">\n</span><span class="st">"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
@@ -194,9 +198,9 @@ window.Quarto = {
 <div class="sourceCode cell-code" id="cb16"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb16-1"><a href="#cb16-1" aria-hidden="true" tabindex="-1"></a><span class="fu">print</span>(control_lower)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>      [,1]  [,2]  [,3]  [,4]
-[1,]  0.32  1.11 -1.42 -0.40
-[2,] -2.26 -1.82 -1.24 -0.35
-[3,] -1.05  0.47 -0.58 -1.54</code></pre>
+[1,] -0.14  0.75 -1.42 -0.67
+[2,] -2.26 -1.82 -0.96 -0.35
+[3,] -1.52 -1.82 -1.42  0.18</code></pre>
 </div>
 <div class="sourceCode cell-code" id="cb18"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb18-1"><a href="#cb18-1" aria-hidden="true" tabindex="-1"></a><span class="fu">cat</span>(<span class="st">"Control upper:</span><span class="sc">\n</span><span class="st">"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
@@ -205,12 +209,12 @@ window.Quarto = {
 <div class="sourceCode cell-code" id="cb20"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb20-1"><a href="#cb20-1" aria-hidden="true" tabindex="-1"></a><span class="fu">print</span>(control_upper)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>      [,1]  [,2]  [,3]  [,4]
-[1,]  0.57  1.37 -0.30 -0.17
-[2,] -1.05 -0.97 -1.03 -0.13
-[3,] -0.46  0.79 -0.25 -0.35</code></pre>
+[1,]  0.21  0.92 -0.50 -0.35
+[2,] -1.72 -0.51 -0.51 -0.06
+[3,] -1.22  0.63 -0.31  0.45</code></pre>
 </div>
 </div>
-<p>We identified two modes from the sample from GvHD positive individual, one at CD3+CD8b+CD4+, which corresponds to the finding in the paper. The second cluster correspond to CD3-CD8b-CD4-CD8-, which seems to correspond to the second and third the clusters of samples of the control individual. We now visualize the two histograms at the two clusters from GvHD patient corresponding to <code>CD3&gt;0, CD8&gt;0</code> and <code>CD3&lt;0, CD8&lt;0</code>. We visualize the two bio-markers <code>CD4</code> and <code>CD8b</code>.</p>
+<p>We identified two modes from the sample from GvHD positive individual, one at CD3+CD8b+CD4+, which corresponds to the finding in the paper. The second cluster correspond to CD3-CD8b-CD4-CD8-, which seems to correspond to the second clusters of samples of the control individual. We now visualize the two histograms at the two clusters from GvHD patient corresponding to <code>CD3&gt;0, CD8&gt;0</code> and <code>CD3&lt;0, CD8&lt;0</code>. We visualize the two bio-markers <code>CD4</code> and <code>CD8b</code>.</p>
 <div class="cell">
 <div class="sourceCode cell-code" id="cb22"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb22-1"><a href="#cb22-1" aria-hidden="true" tabindex="-1"></a><span class="co"># CD3 &lt; 0 and CD8 &lt; 0</span></span>
 <span id="cb22-2"><a href="#cb22-2" aria-hidden="true" tabindex="-1"></a>plot_data_pos_1 <span class="ot">&lt;-</span> <span class="fu">plot_histogram_data</span>(GvHD.pos.scaled, </span>
@@ -339,6 +343,10 @@ window.Quarto = {
 <p><img src="GvHD_files/figure-html/plot-1.png" class="img-fluid quarto-figure quarto-figure-center figure-img" width="384"></p>
 </figure>
 </div>
+</div>
+<div class="cell-output cell-output-stderr">
+<pre><code>Warning: Removed 2 rows containing missing values or values outside the scale range
+(`geom_point()`).</code></pre>
 </div>
 <div class="cell-output-display">
 <div class="quarto-figure quarto-figure-center">

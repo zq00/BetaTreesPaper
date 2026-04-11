@@ -46,7 +46,7 @@ d <- ncol(GvHD.pos.scaled)
 We compute the adaptive Beta-trees histogram at 80% confidence level for the GvHD positive and control individuals. We set a seed to keep our results consistent.
 
 ```{r set_seed}
-set.seed(20)
+set.seed(220)
 ```
 
 ```{r adaptive_hist}
@@ -89,7 +89,7 @@ cat("Control upper:\n")
 print(control_upper)
 ```
 
-We identified two modes from the sample from GvHD positive individual, one at CD3+CD8b+CD4+, which corresponds to the finding in the paper. The second cluster correspond to CD3-CD8b-CD4-CD8-, which seems to correspond to the second and third the clusters of samples of the control individual. We now visualize the two histograms at the two clusters from GvHD patient corresponding to `CD3>0, CD8>0` and `CD3<0, CD8<0`. We visualize the two bio-markers `CD4` and `CD8b`.
+We identified two modes from the sample from GvHD positive individual, one at CD3+CD8b+CD4+, which corresponds to the finding in the paper. The second cluster correspond to CD3-CD8b-CD4-CD8-, which seems to correspond to the second clusters of samples of the control individual. We now visualize the two histograms at the two clusters from GvHD patient corresponding to `CD3>0, CD8>0` and `CD3<0, CD8<0`. We visualize the two bio-markers `CD4` and `CD8b`.
 
 ```{r plot_data_1}
 # CD3 < 0 and CD8 < 0
