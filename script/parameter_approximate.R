@@ -13,15 +13,15 @@ library(tidyr)
 library(goftest)
 
 # directory for storage 
-store_dir <- "/work/pi_qianzhao_umass_edu/Beta_trees/approx_params/result/"
+store_dir <- "approx_params/result/"
 
 # load functions
-src_dir <- "/home/qianzhao_umass_edu/Research/Beta_trees/Paper/V2/src"
+src_dir <- "src"
 src_file_names <- list.files(src_dir, full.names = T)
 for(f_path in src_file_names){source(f_path)}
 
 # load functions in the package directory 
-package_dir <- "/home/qianzhao_umass_edu/Research/Beta_trees/Package/R_04252025/"
+package_dir <- ""
 file_names <- list.files(package_dir, full.names = T)
 for(f_path in file_names){source(f_path)}
 
