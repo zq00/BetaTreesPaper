@@ -6,9 +6,12 @@ Please install the R package BetaTree at the link: https://github.com/zq00/BetaT
 
 - **ModeHunting.qmd** reproduces results in Section 5 Multivariate mode hunting
 
-- **EMT.qmd** reproduces results in Section 6.1 Differentiating normal cells from EMT transitioning cells and in Appendix Section E. 
+- **EMT.qmd** reproduces results in Section 6.1 Differentiating normal cells from EMT transitioning cells and in Appendix Section E.
+   * The data is published with the article “Mass cytometric and transcriptomic profiling of epithelial-mesenchymal transitions in human mammary cell lines” by Wagner et al. (2022) 
+https://www.nature.com/articles/s41597-022-01137-4 (doi: https://doi.org/10.1038/s41597-022-01137-4), the link to the data in Mendeley Data can be found in the Data Records section. The data can be accessed in the link https://data.mendeley.com/datasets/pt3gmyk5r2/2 in the files “MassCytometry_FCS_File_Information_related_to_Fig4a-g.xlsx” and “17_MassCytometryAntibodyPanelInformation.xlsx”. 
 
 - **GvHD.qmd** reproduces results in Section 6.2 Identifying cell populations indicative of GvHD.
+  * Data description can be found at R package reference https://cran.r-project.org/web/packages/mclust/mclust.pdf 
 
 - **src** folder contains the source code for the simulations
   * compute_marginal.R used in Section 4 Example 4 transform the data to F-hat(Xj), F-hat is the estimated marginal distribution, construct the adaptive Beta-tree histogram for the transformed data, and convert the histogram to the scale of the original data. 
