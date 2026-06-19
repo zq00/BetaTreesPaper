@@ -3,7 +3,7 @@ library(tidyverse)
 # 1. Changing parameters of the approximate algorithm 
 
 # input file location 
-file_loc <- "/work/pi_qianzhao_umass_edu/Beta_trees/approx_params/result/"
+file_loc <- "/approx_params/result/"
 # parameters
 L_vals <- c(15, 50, 100)
 B_vals <- c(2000, 10^4, 5*10^4)
@@ -29,7 +29,7 @@ colnames(result) <- c("L", "B",  "avg_time", "TP", "FP", "Y", "sd(time)", "sd (T
 # 2. changing number of true modes 
 
 # input file location 
-file_loc <- "/work/pi_qianzhao_umass_edu/Beta_trees/approx_sim/result/"
+file_loc <- "/approx_sim/result/"
 # parameters
 m_vals <- c(5, 10, 15)
 n_vals <- c(50000, 10^5, 2*10^5)
@@ -57,7 +57,7 @@ colnames(result) <- c("m", "n", "d", "avg_time", "TP", "FP", "Y", "sd(time)", "s
 
 # 3. computation cost of the exact algorithm 
 
-file_loc <- "/work/pi_qianzhao_umass_edu/Beta_trees/exact/result/"
+file_loc <- "/exact/result/"
 # parameters
 n_vals <- c(2000, 5000)
 cutoff <- c(4, 6)
@@ -76,7 +76,7 @@ for(i in 1:2){
 
 # 4. width of confidence intervals 
 
-file_loc <- "/work/pi_qianzhao_umass_edu/Beta_trees/width/result/"
+file_loc <- "/width/result/"
 # parameters
 n_val <- c(2000, 5000, 10^4, 10^5, 5*10^5)
 alpha_val <- c(0.01, 0.05, 0.1, 0.2)
