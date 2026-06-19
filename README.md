@@ -14,7 +14,7 @@ https://www.nature.com/articles/s41597-022-01137-4 (doi: https://doi.org/10.1038
   * Data description can be found at R package reference https://cran.r-project.org/web/packages/mclust/mclust.pdf 
 
 - **src** folder contains the source code for the simulations
-  * compute_marginal.R used in Section 4 Example 4 transform the data to F-hat(Xj), F-hat is the estimated marginal distribution, construct the adaptive Beta-tree histogram for the transformed data, and convert the histogram to the scale of the original data. 
+  * compute_marginal.R used in Section 4 Example 6 transform the data to F-hat(Xj), F-hat is the estimated marginal distribution, construct the adaptive Beta-tree histogram for the transformed data, and convert the histogram to the scale of the original data. 
   * sample_obs.R sample observations from various distributions used in the simulations
   * summary.R computes the probability mass in each region in the examples shown in the paper; computes summary table of simulation results of the approximate mode hunting algorithm 
   * univariate.R generates data and plot of univariate examples
